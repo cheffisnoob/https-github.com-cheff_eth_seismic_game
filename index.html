@@ -585,13 +585,13 @@ body {
 <!-- NAME SCREEN -->
 <div id="nameScreen">
   <h1>SEISMIC RUNNER</h1>
-  <p class="ns-sub">Enter your name to track your coins forever</p>
+  <p class="ns-sub">Enter your name to track your coins — or jump straight in!</p>
 
   <div class="ns-box">
-    <label for="playerNameInput">🤖 Your Player Name</label>
+    <label for="playerNameInput">🤖 YOUR NAME <span style="color:#5a3a1a;font-size:0.7rem;">(optional)</span></label>
     <input type="text" id="playerNameInput" placeholder="Type your name..." maxlength="18" autocomplete="off" spellcheck="false"/>
     <div class="ns-wallet" id="walletPreview">
-      <span style="color:#5a3a1a;">Enter a name to see your wallet</span>
+      <span style="color:#5a3a1a;">Name your player to save coins forever 🪙</span>
     </div>
   </div>
 
@@ -599,7 +599,7 @@ body {
 
   <div style="margin: 18px 0 10px; width: min(420px,90vw);">
     <div class="ns-leaderboard">
-      <h3>🏆 All-Time Coin Leaders</h3>
+      <h3>🏆 ALL TIME COIN LEADERBOARD</h3>
       <div id="lbList"><div class="lb-empty">Loading...</div></div>
     </div>
   </div>
@@ -776,36 +776,45 @@ const lbListEl     = document.getElementById("lbList");
 let currentPlayer = null;   // player name string
 let allTimeCoins  = 0;       // loaded from storage
 
-// ── Storage helpers ──
-async function loadPlayerCoins(name) {
-  const key = "player:" + name.toLowerCase().replace(/\s+/g, "_");
+// ── Storage helpers (localStorage — persists forever in this browser) ──
+const LS_PREFIX = "seismic_runner_";
+
+function loadPlayerCoins(name) {
   try {
-    const res = await window.storage.get(key, true); // shared=true so any device with same name sees it
-    if (res && res.value) {
-      const data = JSON.parse(res.value);
+    const key = LS_PREFIX + "player_" + name.toLowerCase().replace(/\s+/g, "_");
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      const data = JSON.parse(raw);
       return data.totalCoins || 0;
     }
   } catch(e) {}
   return 0;
 }
 
-async function savePlayerCoins(name, total) {
-  const key = "player:" + name.toLowerCase().replace(/\s+/g, "_");
+function savePlayerCoins(name, total) {
   try {
-    await window.storage.set(key, JSON.stringify({ name, totalCoins: total, updated: Date.now() }), true);
+    const key = LS_PREFIX + "player_" + name.toLowerCase().replace(/\s+/g, "_");
+    localStorage.setItem(key, JSON.stringify({ name, totalCoins: total, updated: Date.now() }));
+    // Also update the players index so leaderboard works
+    const indexKey = LS_PREFIX + "players_index";
+    let index = [];
+    try { index = JSON.parse(localStorage.getItem(indexKey) || "[]"); } catch(e) {}
+    const normKey = name.toLowerCase().replace(/\s+/g, "_");
+    if (!index.includes(normKey)) { index.push(normKey); localStorage.setItem(indexKey, JSON.stringify(index)); }
   } catch(e) {}
 }
 
-async function loadLeaderboard() {
+function loadLeaderboard() {
   try {
-    const res = await window.storage.list("player:", true);
-    if (!res || !res.keys || res.keys.length === 0) return [];
+    const indexKey = LS_PREFIX + "players_index";
+    let index = [];
+    try { index = JSON.parse(localStorage.getItem(indexKey) || "[]"); } catch(e) {}
     const players = [];
-    for (const k of res.keys) {
+    for (const normKey of index) {
       try {
-        const r = await window.storage.get(k, true);
-        if (r && r.value) {
-          const d = JSON.parse(r.value);
+        const raw = localStorage.getItem(LS_PREFIX + "player_" + normKey);
+        if (raw) {
+          const d = JSON.parse(raw);
           players.push({ name: d.name, totalCoins: d.totalCoins || 0 });
         }
       } catch(e) {}
@@ -819,35 +828,33 @@ async function loadLeaderboard() {
 const nameInput = document.getElementById("playerNameInput");
 const walletPreview = document.getElementById("walletPreview");
 
-nameInput.addEventListener("input", debounce(async () => {
+nameInput.addEventListener("input", debounce(() => {
   const n = nameInput.value.trim();
   if (!n) {
-    walletPreview.innerHTML = '<span style="color:#5a3a1a;">Enter a name to see your wallet</span>';
+    walletPreview.innerHTML = '<span style="color:#5a3a1a;">Name your player to save coins forever 🪙</span>';
     return;
   }
-  walletPreview.innerHTML = '<span style="color:#5a3a1a;">Loading...</span>';
-  const c = await loadPlayerCoins(n);
+  const c = loadPlayerCoins(n);
   if (c > 0) {
     walletPreview.innerHTML = `Welcome back! 🪙 <span class="wallet-amt">${c.toLocaleString()}</span> coins saved`;
   } else {
     walletPreview.innerHTML = `<span style="color:#5a3a1a;">New player — start earning coins!</span>`;
   }
-}, 400));
+}, 300));
 
 nameInput.addEventListener("keydown", e => { if (e.key === "Enter") submitName(); });
 
-async function submitName() {
+function submitName() {
   const n = nameInput.value.trim();
-  if (!n) { nameInput.style.borderColor = "#f87171"; setTimeout(() => nameInput.style.borderColor = "#8c5c33", 800); return; }
-  currentPlayer = n;
-  allTimeCoins = await loadPlayerCoins(n);
+  currentPlayer = n || null;
+  allTimeCoins = n ? loadPlayerCoins(n) : 0;
   showIntro();
 }
 
-async function showIntro() {
+function showIntro() {
   nameScreenEl.style.display = "none";
   introEl.style.display = "flex";
-  document.getElementById("playerGreeting").textContent = `Welcome, ${currentPlayer}!`;
+  document.getElementById("playerGreeting").textContent = currentPlayer ? `Welcome, ${currentPlayer}!` : `Playing as Guest`;
   document.getElementById("introCoinTotal").textContent = allTimeCoins.toLocaleString();
 }
 
@@ -862,9 +869,9 @@ function switchPlayer() {
   loadLeaderboardUI();
 }
 
-async function loadLeaderboardUI() {
+function loadLeaderboardUI() {
   lbListEl.innerHTML = '<div class="lb-empty">Loading...</div>';
-  const players = await loadLeaderboard();
+  const players = loadLeaderboard();
   if (!players.length) {
     lbListEl.innerHTML = '<div class="lb-empty">No players yet — be the first!</div>';
     return;
@@ -1184,16 +1191,15 @@ function activatePowerup(p) {
   }
 }
 
-async function endGame() {
+function endGame() {
   gameRunning = false;
   [gameInterval, obstacleInterval, coinInterval, powerupInterval, difficultyInterval].forEach(clearInterval);
   highScore = Math.max(highScore, score);
 
   // ── Save coins permanently ──
   if (currentPlayer && coins > 0) {
-    const prev = allTimeCoins;
     allTimeCoins += coins;
-    await savePlayerCoins(currentPlayer, allTimeCoins);
+    savePlayerCoins(currentPlayer, allTimeCoins);
     updateAllTimeDisplay();
     showCoinSaveFlash(coins);
   }
@@ -1203,7 +1209,7 @@ async function endGame() {
   finalCoinsEl.textContent = coins;
   finalLevelEl.textContent = level;
   goAllTimeEl.textContent  = allTimeCoins.toLocaleString();
-  goPlayerNameEl.textContent = currentPlayer ? `${currentPlayer}'s wallet` : "";
+  goPlayerNameEl.textContent = currentPlayer ? `${currentPlayer}'s wallet` : "Guest — add a name to save coins!";
   gameOverEl.classList.add("show");
 }
 
