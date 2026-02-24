@@ -1,237 +1,1023 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Seismic Runner – Rock Bot Edition</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Seismic Runner – Rock Bot Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <style>
-    body {
-      margin: 0;
-      background: #0a0a15;
-      font-family: Arial, Helvetica, sans-serif;
-      color: #eee;
-      overflow: hidden;
-      user-select: none;
-    }
+:root {
+  /* Seismic Brand Kit colors */
+  --dawn: #FF6B35;        /* Primary orange - Dawn */
+  --dusk: #5C2D91;        /* Rich purple - Dusk */
+  --dusk-light: #8B5CF6;  /* lighter Dusk tint */
+  --cloud: #4A90D9;       /* Soft blue - Cloud */
+  --navy: #0D1B2A;        /* Deep navy bg */
+  --navy-mid: #132843;    /* Mid navy */
+  --white: #FFFFFF;
+  --offwhite: #F0EDE8;
 
-    /* Intro Screen */
-    #intro {
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(135deg, #0f0f2a, #1a0d2e);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      text-align: center;
-      padding: 20px;
-    }
+  /* Aliases used throughout */
+  --purple: var(--dusk);
+  --purple-light: var(--dusk-light);
+  --yellow: var(--dawn);
+  --bg: var(--navy);
+  --ground: var(--navy-mid);
+  --neon: var(--cloud);
+}
 
-    #intro h1 {
-      font-size: clamp(2.2rem, 8vw, 3.8rem);
-      margin: 0 0 1rem;
-      color: #a78bfa;
-      text-shadow: 0 0 20px rgba(167,139,250,0.6);
-    }
+body {
+  background: var(--bg);
+  font-family: 'Share Tech Mono', monospace;
+  color: #eee;
+  overflow: hidden;
+  user-select: none;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 
-    #intro p {
-      font-size: clamp(1.1rem, 4vw, 1.4rem);
-      max-width: 600px;
-      margin: 0 0 2rem;
-      line-height: 1.5;
-    }
+/* ── INTRO ── */
+#intro {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 60%, #1a0a35 0%, var(--navy) 80%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  text-align: center;
+  padding: 30px;
+  animation: fadeIn 0.5s ease;
+}
 
-    #playBtn {
-      padding: 16px 48px;
-      font-size: 1.4rem;
-      background: #7c3aed;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
+@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
-    #playBtn:hover {
-      background: #6d28d9;
-      transform: translateY(-3px) scale(1.04);
-      box-shadow: 0 10px 25px rgba(109,40,217,0.5);
-    }
+#intro h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(2rem, 7vw, 3.5rem);
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  color: var(--dawn);
+  text-shadow: 0 0 30px rgba(255,107,53,0.6), 0 0 60px rgba(255,107,53,0.3);
+  letter-spacing: 2px;
+}
 
-    /* Score */
-    #score {
-      position: fixed;
-      top: 20px;
-      left: 30px;
-      font-size: 1.6rem;
-      font-weight: bold;
-      z-index: 50;
-      text-shadow: 0 2px 6px #000;
-    }
+#intro .subtitle {
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  color: var(--cloud);
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+  max-width: 500px;
+}
 
-    /* Game Area */
-    #gameArea {
-      position: relative;
-      width: 100vw;
-      height: 320px;
-      background: linear-gradient(to bottom, #444, #222);
-      border-top: 5px solid #111;
-      overflow: hidden;
-      margin-top: 80px;
-    }
+.controls-hint {
+  background: rgba(92,45,145,0.15);
+  border: 1px solid rgba(92,45,145,0.5);
+  border-radius: 10px;
+  padding: 12px 24px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: #ccc;
+  line-height: 1.8;
+}
 
-    /* Rock Bot character */
-    #character {
-      position: absolute;
-      bottom: 0;
-      left: 70px;
-      width: 110px;           /* larger to suit chunky bot design */
-      height: auto;
-      image-rendering: crisp-edges; /* optional – looks better on pixel-ish art */
-      transition: bottom 0.18s ease-out;
-    }
+.controls-hint span { color: var(--dawn); font-weight: bold; }
 
-    .obstacle {
-      position: absolute;
-      bottom: 0;
-      width: 28px;
-      height: 70px;           /* taller so big character must actually jump */
-      background: #2d2d2d;
-      border: 3px solid #111;
-      border-radius: 6px 6px 0 0;
-      box-shadow: 0 4px 10px #0008;
-    }
-  </style>
+.mode-buttons { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+
+.mode-buttons button {
+  padding: 13px 28px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-easy { background: #1a6b3c; color: #fff; border-color: #27a560; }
+.btn-easy:hover { background: #145530; box-shadow: 0 0 20px rgba(39,165,96,0.4); }
+.btn-hard { background: #c0392b; color: #fff; border-color: #e74c3c; }
+.btn-hard:hover { background: #962d22; box-shadow: 0 0 20px rgba(231,76,60,0.4); }
+
+/* ── HUD ── */
+#hud {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: rgba(13,27,42,0.92);
+  backdrop-filter: blur(6px);
+  border-bottom: 2px solid var(--dawn);
+  z-index: 50;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.hud-item { display: flex; flex-direction: column; align-items: center; }
+.hud-label { font-size: 0.55rem; letter-spacing: 2px; color: var(--cloud); text-transform: uppercase; }
+.hud-val { font-size: 1.2rem; font-weight: 700; color: var(--dawn); }
+#livesDisplay { color: #f87171; font-size: 1.3rem; letter-spacing: 3px; }
+
+/* ── GAME WRAPPER ── */
+#gameWrapper {
+  width: 100vw;
+  padding-top: 58px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── GAME AREA ── */
+#gameArea {
+  position: relative;
+  width: 100vw;
+  height: 300px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffd6e0 0%, #ffb3c6 75%, #ff85a1 100%);
+  border-top: 2px solid var(--dawn);
+  border-bottom: 2px solid var(--dawn);
+}
+
+/* Stars bg */
+#gameArea::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 10% 20%, rgba(255,107,53,0.4) 0%, transparent 100%),
+    radial-gradient(2px 2px at 30% 60%, rgba(92,45,145,0.3) 0%, transparent 100%),
+    radial-gradient(2px 2px at 60% 30%, rgba(255,107,53,0.3) 0%, transparent 100%),
+    radial-gradient(2px 2px at 80% 70%, rgba(92,45,145,0.2) 0%, transparent 100%),
+    radial-gradient(2px 2px at 45% 15%, rgba(255,107,53,0.5) 0%, transparent 100%),
+    radial-gradient(2px 2px at 70% 50%, rgba(92,45,145,0.3) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Scrolling SEISMIC watermark text in background */
+#seismicText {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: 5rem;
+  letter-spacing: 0.3em;
+  color: rgba(255,107,53,0.15);
+  text-transform: uppercase;
+  z-index: 0;
+  animation: scrollText 18s linear infinite;
+  pointer-events: none;
+  user-select: none;
+  width: max-content;
+}
+@keyframes scrollText {
+  0%   { transform: translateY(-50%) translateX(0); }
+  100% { transform: translateY(-50%) translateX(-50%); }
+}
+
+/* Seismic grid floor */
+#seismicBg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 50px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255,107,53,0.4) 0,
+    rgba(255,107,53,0.4) 2px,
+    transparent 2px,
+    transparent 40px
+  );
+  animation: moveSeismic 1.2s linear infinite;
+  z-index: 1;
+}
+
+@keyframes moveSeismic {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Ground line */
+#ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--dusk), var(--dawn), var(--cloud), var(--dawn), var(--dusk));
+  background-size: 300%;
+  animation: groundGlow 3s linear infinite;
+  z-index: 2;
+  box-shadow: 0 0 12px var(--dawn), 0 0 24px rgba(255,107,53,0.4);
+}
+
+@keyframes groundGlow { 0%{background-position:0%} 100%{background-position:200%} }
+
+/* ── CHARACTER ── */
+#character {
+  position: absolute;
+  bottom: 4px;
+  left: 70px;
+  width: 72px;
+  height: 90px;
+  z-index: 10;
+  transition: filter 0.1s;
+  image-rendering: crisp-edges;
+}
+
+#character svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Walking bounce animation on the SVG */
+#character svg { animation: botWalk 0.35s ease-in-out infinite alternate; }
+@keyframes botWalk {
+  from { transform: translateY(0px); }
+  to   { transform: translateY(3px); }
+}
+
+/* Left leg walk */
+#bot-leg-l { animation: legL 0.35s ease-in-out infinite alternate; transform-origin: 50% 0%; }
+@keyframes legL {
+  from { transform: rotate(-8deg); }
+  to   { transform: rotate(8deg); }
+}
+/* Right leg walks opposite */
+#bot-leg-r { animation: legR 0.35s ease-in-out infinite alternate; transform-origin: 50% 0%; }
+@keyframes legR {
+  from { transform: rotate(8deg); }
+  to   { transform: rotate(-8deg); }
+}
+
+/* Arm swing */
+#bot-arm-l { animation: armL 0.35s ease-in-out infinite alternate; transform-origin: 80% 20%; }
+@keyframes armL {
+  from { transform: rotate(6deg); }
+  to   { transform: rotate(-6deg); }
+}
+#bot-arm-r { animation: armR 0.35s ease-in-out infinite alternate; transform-origin: 20% 20%; }
+@keyframes armR {
+  from { transform: rotate(-6deg); }
+  to   { transform: rotate(6deg); }
+}
+
+#character.hit {
+  filter: brightness(2.5) saturate(0) sepia(1) hue-rotate(320deg);
+  animation: shake 0.3s ease;
+}
+@keyframes shake {
+  0%,100%{left:70px}
+  25%{left:64px}
+  75%{left:76px}
+}
+
+/* ── OBSTACLES ── */
+.obstacle {
+  position: absolute;
+  bottom: 4px;
+  border-radius: 4px 4px 0 0;
+  z-index: 5;
+  background: linear-gradient(180deg, #2d1a4a, #1a0f2e);
+  box-shadow: 0 0 8px rgba(92,45,145,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.obstacle::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--dawn);
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 0 8px var(--dawn);
+}
+
+/* coin */
+.coin {
+  position: absolute;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ff9a6c, #c04a1a);
+  box-shadow: 0 0 10px rgba(255,107,53,0.8);
+  z-index: 6;
+  animation: coinBob 0.8s ease-in-out infinite alternate;
+}
+@keyframes coinBob { from{transform:translateY(0)} to{transform:translateY(-8px)} }
+
+/* ── PARTICLES ── */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 20;
+  animation: particleFade 0.6s ease-out forwards;
+}
+@keyframes particleFade {
+  0%   { opacity: 1; transform: scale(1) translate(0,0); }
+  100% { opacity: 0; transform: scale(0) translate(var(--dx), var(--dy)); }
+}
+
+/* ── POWER-UP ── */
+.powerup {
+  position: absolute;
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  z-index: 6;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  animation: powerupFloat 0.7s ease-in-out infinite alternate;
+  box-shadow: 0 0 12px rgba(74,144,217,0.7);
+  background: rgba(74,144,217,0.2);
+  border: 2px solid var(--cloud);
+}
+@keyframes powerupFloat { from{transform:translateY(0)} to{transform:translateY(-10px)} }
+
+/* ── MESSAGES ── */
+#message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  font-weight: 900;
+  color: var(--dawn);
+  text-shadow: 0 0 20px rgba(255,107,53,0.9);
+  pointer-events: none;
+  z-index: 80;
+  opacity: 0;
+  transition: opacity 0.3s;
+  text-align: center;
+}
+
+/* ── GAME OVER SCREEN ── */
+#gameOver {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(8,8,15,0.92);
+  z-index: 90;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 20px;
+}
+#gameOver.show { display: flex; animation: fadeIn 0.4s ease; }
+
+#gameOver h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(2rem, 7vw, 3.5rem);
+  color: #f87171;
+  text-shadow: 0 0 30px rgba(248,113,113,0.6);
+  margin-bottom: 1rem;
+}
+
+#gameOver .final-stats {
+  background: rgba(92,45,145,0.12);
+  border: 1px solid rgba(255,107,53,0.35);
+  border-radius: 12px;
+  padding: 20px 40px;
+  margin-bottom: 2rem;
+}
+
+#gameOver .stat-line {
+  font-size: 1.1rem;
+  margin: 6px 0;
+  color: #ddd;
+}
+#gameOver .stat-line span { color: var(--dawn); font-weight: bold; }
+
+#gameOver button {
+  padding: 14px 32px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: var(--dawn);
+  color: #fff;
+  border: 2px solid #ff9a6c;
+  border-radius: 8px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+#gameOver button:hover { background: #e55a27; box-shadow: 0 0 20px rgba(255,107,53,0.6); }
+
+/* Pause overlay */
+#pauseOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(13,27,42,0.75);
+  z-index: 70;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3rem;
+  color: var(--dawn);
+  text-shadow: 0 0 20px rgba(255,107,53,0.7);
+}
+#pauseOverlay.show { display: flex; }
+
+/* mobile buttons */
+#mobileControls {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  gap: 16px;
+  z-index: 60;
+}
+@media (max-width: 768px), (pointer: coarse) {
+  #mobileControls { display: flex; }
+}
+.mob-btn {
+  width: 70px; height: 70px;
+  border-radius: 50%;
+  border: 3px solid var(--dawn);
+  background: rgba(255,107,53,0.15);
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: all 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mob-btn:active { background: rgba(255,107,53,0.4); transform: scale(0.95); }
+
+/* shield effect */
+#character.shielded #shieldRing { opacity: 1 !important; }
+#character.shielded { filter: drop-shadow(0 0 8px var(--cloud)); }
+</style>
 </head>
 <body>
 
+<!-- INTRO -->
 <div id="intro">
-  <h1>⚡ Seismic Runner ⚡</h1>
-  <p>Help the mighty Rock Bot jump over seismic barriers!<br>
-     Press <strong>SPACE</strong> or <strong>↑ Arrow</strong> to jump.<br>
-     Survive as long as possible!</p>
-  <button id="playBtn">Start Running</button>
+  <h1>⚡ SEISMIC RUNNER ⚡</h1>
+  <p class="subtitle">Guide the mighty Rock Bot through seismic barriers!<br>Collect coins, grab power-ups, survive!</p>
+  <div class="controls-hint">
+    <span>SPACE</span> / <span>↑</span> = Jump &nbsp;|&nbsp; <span>↓</span> = Duck &nbsp;|&nbsp; <span>P</span> = Pause<br>
+    Double-jump supported! 🤖
+  </div>
+  <div class="mode-buttons">
+    <button class="btn-easy" onclick="startGame('easy')">🟢 Easy</button>
+    <button class="btn-hard" onclick="startGame('hard')">🔴 Hard</button>
+  </div>
 </div>
 
-<div id="score">Score: 0</div>
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-item">
+    <span class="hud-label">Score</span>
+    <span class="hud-val" id="scoreVal">0</span>
+  </div>
+  <div class="hud-item">
+    <span class="hud-label">High Score</span>
+    <span class="hud-val" id="highVal">0</span>
+  </div>
+  <div class="hud-item">
+    <span class="hud-label">Coins</span>
+    <span class="hud-val" id="coinVal">0</span>
+  </div>
+  <div class="hud-item">
+    <span class="hud-label">Lives</span>
+    <span class="hud-val" id="livesDisplay">❤️❤️❤️</span>
+  </div>
+  <div class="hud-item">
+    <span class="hud-label">Level</span>
+    <span class="hud-val" id="levelVal">1</span>
+  </div>
+</div>
 
-<div id="gameArea">
-  <!-- 
-    IMPORTANT: Replace the src below with the actual path/filename of your rock-bot image
-    Common options:
-      src="WhatsApp Image 2026-02-24 at 04.06.18.jpeg"
-      src="rock-bot.png"
-      src="./character.png"
-      or use base64 data URL if embedding directly
-  -->
-  <img id="character" src="WhatsApp Image 2026-02-24 at 04.06.18.jpeg" alt="Rock Bot">
+<!-- GAME -->
+<div id="gameWrapper">
+  <div id="gameArea">
+    <div id="seismicBg"></div>
+    <div id="ground"></div>
+    <!-- Scrolling SEISMIC watermark -->
+    <div id="seismicText">SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp;</div>
+    <div id="character">
+      <!-- Rock Bot SVG — faithful to the stone golem character art -->
+      <svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- LEFT ARM (big stone fist) -->
+        <g id="bot-arm-l">
+          <!-- upper arm -->
+          <polygon points="4,26 16,22 18,44 6,48" fill="#7a4f2d" stroke="#3a2010" stroke-width="1.2"/>
+          <!-- shoulder joint (dark gap) -->
+          <ellipse cx="14" cy="24" rx="5" ry="4" fill="#1a1007"/>
+          <!-- forearm -->
+          <polygon points="2,44 16,42 20,62 4,66" fill="#8c5c33" stroke="#3a2010" stroke-width="1.2"/>
+          <!-- big stone fist -->
+          <polygon points="0,60 18,56 22,76 16,80 2,80" fill="#b8855a" stroke="#3a2010" stroke-width="1.2"/>
+          <polygon points="2,76 10,72 18,74 16,80 2,80" fill="#9a6640" stroke="#3a2010" stroke-width="0.8"/>
+        </g>
+
+        <!-- RIGHT ARM (big stone fist) -->
+        <g id="bot-arm-r">
+          <!-- upper arm -->
+          <polygon points="76,26 64,22 62,44 74,48" fill="#7a4f2d" stroke="#3a2010" stroke-width="1.2"/>
+          <!-- shoulder joint (dark gap) -->
+          <ellipse cx="66" cy="24" rx="5" ry="4" fill="#1a1007"/>
+          <!-- forearm -->
+          <polygon points="78,44 64,42 60,62 76,66" fill="#8c5c33" stroke="#3a2010" stroke-width="1.2"/>
+          <!-- big stone fist -->
+          <polygon points="80,60 62,56 58,76 64,80 78,80" fill="#b8855a" stroke="#3a2010" stroke-width="1.2"/>
+          <polygon points="78,76 70,72 62,74 64,80 78,80" fill="#9a6640" stroke="#3a2010" stroke-width="0.8"/>
+        </g>
+
+        <!-- TORSO -->
+        <polygon points="18,22 62,22 66,56 14,56" fill="#7a4f2d" stroke="#3a2010" stroke-width="1.5"/>
+        <!-- torso highlight facets -->
+        <polygon points="18,22 38,20 38,38 20,40" fill="#9a6640" stroke="#3a2010" stroke-width="0.8"/>
+        <polygon points="42,20 62,22 60,40 42,38" fill="#6b4426" stroke="#3a2010" stroke-width="0.8"/>
+        <polygon points="14,56 38,52 38,56" fill="#5a3418" stroke="#3a2010" stroke-width="0.8"/>
+        <!-- X emblem removed -->
+
+        <!-- WAIST / HIP BELT -->
+        <rect x="20" y="54" width="40" height="8" rx="2" fill="#1a1007"/>
+        <rect x="24" y="55" width="32" height="6" rx="2" fill="#2d1f0e"/>
+
+        <!-- LEFT LEG -->
+        <g id="bot-leg-l">
+          <!-- thigh -->
+          <polygon points="22,62 38,62 36,76 20,76" fill="#8c5c33" stroke="#3a2010" stroke-width="1.2"/>
+          <!-- knee joint -->
+          <polygon points="20,74 38,74 40,80 18,80" fill="#6b4426" stroke="#3a2010" stroke-width="1"/>
+          <!-- shin -->
+          <polygon points="18,78 40,78 38,90 20,90" fill="#7a4f2d" stroke="#3a2010" stroke-width="1.2"/>
+          <!-- foot -->
+          <polygon points="16,88 42,88 44,98 14,98" fill="#b8855a" stroke="#3a2010" stroke-width="1.2"/>
+          <polygon points="16,94 28,90 40,92 44,98 14,98" fill="#9a6640" stroke="#3a2010" stroke-width="0.8"/>
+        </g>
+
+        <!-- RIGHT LEG -->
+        <g id="bot-leg-r">
+          <!-- thigh -->
+          <polygon points="58,62 42,62 44,76 60,76" fill="#8c5c33" stroke="#3a2010" stroke-width="1.2"/>
+          <!-- knee joint -->
+          <polygon points="60,74 42,74 40,80 62,80" fill="#6b4426" stroke="#3a2010" stroke-width="1"/>
+          <!-- shin -->
+          <polygon points="62,78 40,78 42,90 60,90" fill="#7a4f2d" stroke="#3a2010" stroke-width="1.2"/>
+          <!-- foot -->
+          <polygon points="64,88 38,88 36,98 66,98" fill="#b8855a" stroke="#3a2010" stroke-width="1.2"/>
+          <polygon points="64,94 52,90 40,92 36,98 66,98" fill="#9a6640" stroke="#3a2010" stroke-width="0.8"/>
+        </g>
+
+        <!-- HEAD -->
+        <!-- head base (rounded stone) -->
+        <polygon points="26,6 54,6 58,22 22,22" fill="#7a4f2d" stroke="#3a2010" stroke-width="1.5"/>
+        <!-- head top facets -->
+        <polygon points="28,6 40,2 52,6 54,14 26,14" fill="#9a6640" stroke="#3a2010" stroke-width="0.8"/>
+        <polygon points="30,14 50,14 54,22 26,22" fill="#6b4426" stroke="#3a2010" stroke-width="0.8"/>
+        <!-- left eye -->
+        <circle cx="33" cy="13" r="3.5" fill="#fff"/>
+        <circle cx="33" cy="13" r="2" fill="#1a1007"/>
+        <circle cx="32.3" cy="12.3" r="0.7" fill="#fff" opacity="0.9"/>
+        <!-- right eye -->
+        <circle cx="47" cy="13" r="3.5" fill="#fff"/>
+        <circle cx="47" cy="13" r="2" fill="#1a1007"/>
+        <circle cx="46.3" cy="12.3" r="0.7" fill="#fff" opacity="0.9"/>
+
+        <!-- Shielded glow ring (hidden by default, shown via CSS) -->
+        <circle id="shieldRing" cx="40" cy="50" r="44" fill="none" stroke="#4A90D9" stroke-width="3" opacity="0" stroke-dasharray="8 4">
+          <animate attributeName="stroke-dashoffset" from="0" to="48" dur="1s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- Message overlay -->
+<div id="message"></div>
+
+<!-- PAUSE -->
+<div id="pauseOverlay" class="pauseOverlay">⏸ PAUSED</div>
+
+<!-- GAME OVER -->
+<div id="gameOver">
+  <h2>GAME OVER</h2>
+  <div class="final-stats">
+    <div class="stat-line">Score: <span id="finalScore">0</span></div>
+    <div class="stat-line">High Score: <span id="finalHigh">0</span></div>
+    <div class="stat-line">Coins Collected: <span id="finalCoins">0</span></div>
+    <div class="stat-line">Level Reached: <span id="finalLevel">1</span></div>
+  </div>
+  <button onclick="restartGame()">🔄 Play Again</button>
+</div>
+
+<!-- Mobile controls -->
+<div id="mobileControls">
+  <button class="mob-btn" id="duckBtn" ontouchstart="startDuck()" ontouchend="stopDuck()">⬇️</button>
+  <button class="mob-btn" ontouchstart="jump()">⬆️</button>
 </div>
 
 <script>
-const character = document.getElementById("character");
-const gameArea = document.getElementById("gameArea");
-const scoreDisplay = document.getElementById("score");
-const intro = document.getElementById("intro");
-const playBtn = document.getElementById("playBtn");
+// ── Elements ──
+const character   = document.getElementById("character");
+const gameArea    = document.getElementById("gameArea");
+const seismicBg   = document.getElementById("seismicBg");
+const scoreEl     = document.getElementById("scoreVal");
+const highEl      = document.getElementById("highVal");
+const coinEl      = document.getElementById("coinVal");
+const livesEl     = document.getElementById("livesDisplay");
+const levelEl     = document.getElementById("levelVal");
+const gameOverEl  = document.getElementById("gameOver");
+const finalScoreEl= document.getElementById("finalScore");
+const finalHighEl = document.getElementById("finalHigh");
+const finalCoinsEl= document.getElementById("finalCoins");
+const finalLevelEl= document.getElementById("finalLevel");
+const messageEl   = document.getElementById("message");
+const pauseEl     = document.getElementById("pauseOverlay");
+const intro       = document.getElementById("intro");
 
-let isJumping = false;
-let jumpHeight = 140;       // higher jump for bigger character
-let gravity = 6;
-let obstacles = [];
-let gameSpeed = 6;          // slightly faster for more challenge
-let score = 0;
-let gameRunning = false;
+// ── State ──
+let score = 0, highScore = 0, coins = 0, lives = 3, level = 1;
+let gameSpeed = 5, gameRunning = false, paused = false;
+let obstacles = [], coinItems = [], powerups = [];
+let gameInterval, obstacleInterval, coinInterval, powerupInterval, difficultyInterval;
+let isJumping = false, jumpCount = 0, isDucking = false;
+let charBottom = 0; // track character's bottom position
+let shielded = false, shieldTimer = null;
+let msgTimeout = null;
 
-let gameInterval, obstacleInterval;
+const GROUND = 4; // px above ground
+const MAX_JUMP = 220;
+const GRAVITY = 0.55;
+const CHAR_W = 72, CHAR_H = 90;
+const DUCK_H = 50;
 
+const difficulties = {
+  easy: { speed: 4, obstacleFreq: 2200, maxH: 80,  minH: 30 },
+  hard: { speed: 6, obstacleFreq: 1400, maxH: 110, minH: 35 }
+};
+let cfg;
+
+// ── Lives display ──
+function updateLives() {
+  livesEl.textContent = "❤️".repeat(lives) || "💀";
+}
+
+// ── Flash message ──
+function showMessage(text, color = "#facc15") {
+  clearTimeout(msgTimeout);
+  messageEl.textContent = text;
+  messageEl.style.color = color;
+  messageEl.style.opacity = "1";
+  msgTimeout = setTimeout(() => { messageEl.style.opacity = "0"; }, 1200);
+}
+
+// ── Start ──
+function startGame(mode) {
+  cfg = difficulties[mode];
+  gameSpeed = cfg.speed;
+  intro.style.display = "none";
+
+  score = 0; coins = 0; lives = 3; level = 1;
+  charBottom = GROUND;
+  character.style.bottom = GROUND + "px";
+  character.style.height = CHAR_H + "px";
+  updateLives();
+  updateHUD();
+
+  gameRunning = true;
+  gameInterval      = setInterval(gameLoop, 16);
+  obstacleInterval  = setInterval(spawnObstacle, cfg.obstacleFreq);
+  coinInterval      = setInterval(spawnCoin, 3000);
+  powerupInterval   = setInterval(spawnPowerup, 8000);
+  difficultyInterval= setInterval(increaseDifficulty, 10000);
+}
+
+function restartGame() {
+  // clear all
+  [gameInterval, obstacleInterval, coinInterval, powerupInterval, difficultyInterval].forEach(clearInterval);
+  obstacles.forEach(o => o.el && o.el.remove());
+  coinItems.forEach(c => c.el && c.el.remove());
+  powerups.forEach(p => p.el && p.el.remove());
+  obstacles = []; coinItems = []; powerups = [];
+  gameOverEl.classList.remove("show");
+  isJumping = false; jumpCount = 0; isDucking = false; shielded = false;
+  character.classList.remove("hit","shielded");
+  clearTimeout(shieldTimer);
+  intro.style.display = "none";
+  // re-ask difficulty? just default easy for restart
+  startGame(cfg === difficulties.hard ? 'hard' : 'easy');
+}
+
+// ── HUD ──
+function updateHUD() {
+  scoreEl.textContent = score;
+  highEl.textContent  = highScore;
+  coinEl.textContent  = coins;
+  levelEl.textContent = level;
+}
+
+// ── Difficulty progression ──
+function increaseDifficulty() {
+  if (!gameRunning) return;
+  level++;
+  gameSpeed = Math.min(gameSpeed + 0.5, 16);
+  showMessage(`LEVEL ${level}!`, "#4A90D9");
+  levelEl.textContent = level;
+}
+
+// ── Jump (double jump) ──
 function jump() {
-  if (isJumping || !gameRunning) return;
+  if (!gameRunning || paused) return;
+  if (jumpCount >= 2) return;
+  jumpCount++;
   isJumping = true;
 
-  let velocity = 14; // initial upward speed
-  let pos = 0;
+  let velocity = jumpCount === 1 ? 15 : 11;
+  const jumpInterval = setInterval(() => {
+    charBottom += velocity;
+    velocity -= GRAVITY;
 
-  const jumpPhysics = setInterval(() => {
-    pos += velocity;
-    velocity -= gravity * 0.4; // smoother gravity curve
-
-    character.style.bottom = pos + "px";
-
-    if (pos <= 0) {
-      clearInterval(jumpPhysics);
-      character.style.bottom = "0px";
+    if (charBottom > MAX_JUMP) charBottom = MAX_JUMP;
+    if (charBottom <= GROUND) {
+      charBottom = GROUND;
+      clearInterval(jumpInterval);
       isJumping = false;
+      jumpCount = 0;
+      spawnLandParticles();
     }
-  }, 16); // ~60 fps
+    character.style.bottom = charBottom + "px";
+  }, 16);
 }
 
-function createObstacle() {
-  const obs = document.createElement("div");
-  obs.className = "obstacle";
-  obs.style.left = gameArea.offsetWidth + "px";
-  gameArea.appendChild(obs);
-  obstacles.push(obs);
+// ── Duck ──
+function startDuck() {
+  if (!gameRunning || paused || isJumping) return;
+  isDucking = true;
+  character.style.height = DUCK_H + "px";
+  character.style.bottom = GROUND + "px";
+}
+function stopDuck() {
+  isDucking = false;
+  character.style.height = CHAR_H + "px";
 }
 
-function moveObstacles() {
-  obstacles.forEach((obs, i) => {
-    let left = parseFloat(obs.style.left) || gameArea.offsetWidth;
-    left -= gameSpeed;
-    obs.style.left = left + "px";
+// ── Particles ──
+function spawnLandParticles() {
+  for (let i = 0; i < 6; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    const size = Math.random() * 6 + 3;
+    const angle = Math.random() * 360;
+    const dist  = Math.random() * 40 + 20;
+    const dx = Math.cos(angle * Math.PI / 180) * dist;
+    const dy = Math.sin(angle * Math.PI / 180) * dist - 20;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      background: #FF6B35;
+      left: ${70 + 36}px;
+      bottom: 4px;
+      --dx: ${dx}px; --dy: ${dy}px;
+    `;
+    gameArea.appendChild(p);
+    setTimeout(() => p.remove(), 600);
+  }
+}
 
-    if (left < -30) {
-      obs.remove();
-      obstacles.splice(i, 1);
-      return;
+function spawnHitParticles(x, y) {
+  for (let i = 0; i < 10; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    const size = Math.random() * 8 + 4;
+    const angle = Math.random() * 360;
+    const dist  = Math.random() * 60 + 20;
+    const dx = Math.cos(angle * Math.PI / 180) * dist;
+    const dy = Math.sin(angle * Math.PI / 180) * dist - 30;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      background: #f87171;
+      left: ${x}px; top: ${y}px;
+      --dx: ${dx}px; --dy: ${dy}px;
+    `;
+    gameArea.appendChild(p);
+    setTimeout(() => p.remove(), 700);
+  }
+}
+
+// ── Spawn obstacles ──
+function spawnObstacle() {
+  if (!gameRunning) return;
+  const height = Math.floor(Math.random() * (cfg.maxH - cfg.minH + 1) + cfg.minH);
+  const width  = Math.floor(Math.random() * 20 + 20);
+  const el = document.createElement("div");
+  el.className = "obstacle";
+  el.style.height = height + "px";
+  el.style.width  = width + "px";
+  el.style.left   = gameArea.offsetWidth + "px";
+  gameArea.appendChild(el);
+  obstacles.push({ el, x: gameArea.offsetWidth, width, height });
+}
+
+// ── Spawn coins ──
+function spawnCoin() {
+  if (!gameRunning) return;
+  const el = document.createElement("div");
+  el.className = "coin";
+  const bottom = Math.floor(Math.random() * 120 + 20);
+  el.style.bottom = bottom + "px";
+  el.style.left   = gameArea.offsetWidth + "px";
+  gameArea.appendChild(el);
+  coinItems.push({ el, x: gameArea.offsetWidth, bottom });
+}
+
+// ── Spawn power-ups ──
+const powerTypes = [
+  { emoji: "🛡️", type: "shield", label: "SHIELD!" },
+  { emoji: "⚡", type: "slow",   label: "SLOW!" },
+  { emoji: "💥", type: "clear",  label: "CLEAR!" }
+];
+
+function spawnPowerup() {
+  if (!gameRunning) return;
+  const pw = powerTypes[Math.floor(Math.random() * powerTypes.length)];
+  const el = document.createElement("div");
+  el.className = "powerup";
+  el.textContent = pw.emoji;
+  const bottom = Math.floor(Math.random() * 100 + 40);
+  el.style.bottom = bottom + "px";
+  el.style.left   = gameArea.offsetWidth + "px";
+  gameArea.appendChild(el);
+  powerups.push({ el, x: gameArea.offsetWidth, bottom, ...pw });
+}
+
+// ── Collision (AABB) ──
+function rectsOverlap(ax, ay, aw, ah, bx, by, bw, bh) {
+  return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+}
+
+function getCharRect() {
+  const charH = isDucking ? DUCK_H : CHAR_H;
+  // x = 70px fixed left, add some padding for tighter hitbox
+  return { x: 78, y: gameArea.offsetHeight - charBottom - charH, w: CHAR_W - 20, h: charH - 10 };
+}
+
+// ── Main loop ──
+function gameLoop() {
+  if (!gameRunning || paused) return;
+
+  score++;
+  if (score > highScore) highScore = score;
+  updateHUD();
+
+  // Speed up seismic bg
+  const anim = `moveSeismic ${Math.max(0.4, 1.2 - gameSpeed * 0.05)}s linear infinite`;
+  seismicBg.style.animation = anim;
+
+  const ch = getCharRect();
+  const aH = gameArea.offsetHeight;
+
+  // Move obstacles
+  obstacles = obstacles.filter(obs => {
+    obs.x -= gameSpeed;
+    obs.el.style.left = obs.x + "px";
+    if (obs.x < -obs.width - 10) {
+      obs.el.remove(); return false;
     }
-
-    // Simple AABB collision
-    const charRect = character.getBoundingClientRect();
-    const obsRect  = obs.getBoundingClientRect();
-
-    if (
-      charRect.left < obsRect.right &&
-      charRect.right > obsRect.left &&
-      charRect.bottom > obsRect.top
-    ) {
-      endGame();
+    // collision
+    const oy = aH - obs.height;
+    if (!shielded && rectsOverlap(ch.x, ch.y, ch.w, ch.h, obs.x, oy, obs.width, obs.height)) {
+      handleHit(obs.x, oy);
     }
+    return true;
+  });
+
+  // Move coins
+  coinItems = coinItems.filter(c => {
+    c.x -= gameSpeed;
+    c.el.style.left = c.x + "px";
+    if (c.x < -30) { c.el.remove(); return false; }
+    const cy = aH - c.bottom - 22;
+    if (rectsOverlap(ch.x, ch.y, ch.w, ch.h, c.x, cy, 22, 22)) {
+      c.el.remove();
+      coins++;
+      showMessage(`+1 COIN 🪙`, "#FF6B35");
+      return false;
+    }
+    return true;
+  });
+
+  // Move powerups
+  powerups = powerups.filter(p => {
+    p.x -= gameSpeed;
+    p.el.style.left = p.x + "px";
+    if (p.x < -40) { p.el.remove(); return false; }
+    const py = aH - p.bottom - 28;
+    if (rectsOverlap(ch.x, ch.y, ch.w, ch.h, p.x, py, 28, 28)) {
+      p.el.remove();
+      activatePowerup(p);
+      return false;
+    }
+    return true;
   });
 }
 
-function updateScore() {
-  score++;
-  scoreDisplay.textContent = `Score: ${score}`;
+// ── Handle hit ──
+let hitCooldown = false;
+function handleHit(ex, ey) {
+  if (hitCooldown) return;
+  hitCooldown = true;
+  spawnHitParticles(ex, ey);
+  lives--;
+  updateLives();
+  character.classList.add("hit");
+  setTimeout(() => { character.classList.remove("hit"); hitCooldown = false; }, 600);
+
+  if (lives <= 0) {
+    endGame();
+  } else {
+    showMessage(`💔 -1 Life! (${lives} left)`, "#f87171");
+    // brief invincibility
+    shielded = true;
+    setTimeout(() => { shielded = false; }, 1500);
+  }
 }
 
-function gameLoop() {
-  moveObstacles();
-  updateScore();
+// ── Powerups ──
+function activatePowerup(p) {
+  showMessage(p.label + " 🎉", "#00f5d4");
+  if (p.type === "shield") {
+    shielded = true;
+    character.classList.add("shielded");
+    clearTimeout(shieldTimer);
+    shieldTimer = setTimeout(() => {
+      shielded = false;
+      character.classList.remove("shielded");
+    }, 4000);
+  } else if (p.type === "slow") {
+    const oldSpeed = gameSpeed;
+    gameSpeed = Math.max(2, gameSpeed * 0.5);
+    setTimeout(() => { gameSpeed = oldSpeed; }, 4000);
+  } else if (p.type === "clear") {
+    obstacles.forEach(o => o.el.remove());
+    obstacles = [];
+  }
 }
 
+// ── End ──
 function endGame() {
-  clearInterval(gameInterval);
-  clearInterval(obstacleInterval);
   gameRunning = false;
-  alert(`Game Over!\nFinal Score: ${score}`);
-  setTimeout(() => location.reload(), 800);
+  [gameInterval, obstacleInterval, coinInterval, powerupInterval, difficultyInterval].forEach(clearInterval);
+  highScore = Math.max(highScore, score);
+  finalScoreEl.textContent = score;
+  finalHighEl.textContent  = highScore;
+  finalCoinsEl.textContent = coins;
+  finalLevelEl.textContent = level;
+  gameOverEl.classList.add("show");
 }
 
-playBtn.onclick = () => {
-  intro.style.display = "none";
-  gameRunning = true;
-  gameInterval    = setInterval(gameLoop, 20);
-  obstacleInterval = setInterval(createObstacle, 1800); // spawn every ~1.8s
-};
+// ── Pause ──
+function togglePause() {
+  if (!gameRunning) return;
+  paused = !paused;
+  pauseEl.classList.toggle("show", paused);
+}
 
+// ── Keyboard ──
 document.addEventListener("keydown", e => {
   if (e.code === "Space" || e.code === "ArrowUp") {
     e.preventDefault();
     jump();
   }
+  if (e.code === "ArrowDown") {
+    e.preventDefault();
+    startDuck();
+  }
+  if (e.code === "KeyP" || e.code === "Escape") {
+    togglePause();
+  }
 });
+document.addEventListener("keyup", e => {
+  if (e.code === "ArrowDown") stopDuck();
+});
+
+// ── Touch ──
+let touchStartY = 0;
+document.addEventListener("touchstart", e => {
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+document.addEventListener("touchend", e => {
+  const dy = touchStartY - e.changedTouches[0].clientY;
+  if (dy > 20) jump();
+  if (dy < -20) startDuck();
+}, { passive: true });
 </script>
 </body>
 </html>
