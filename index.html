@@ -45,7 +45,11 @@ body {
 #intro {
   position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 60%, #1a0a35 0%, var(--navy) 80%);
+  background:
+    radial-gradient(ellipse at 30% 70%, rgba(255,107,53,0.6) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 25%, rgba(255,80,20,0.5) 0%, transparent 50%),
+    radial-gradient(ellipse at 55% 50%, rgba(255,140,60,0.35) 0%, transparent 65%),
+    linear-gradient(135deg, #1a0800 0%, #2d1000 40%, #1a0a00 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -467,7 +471,7 @@ body {
 
 <!-- INTRO -->
 <div id="intro">
-  <h1>⚡ SEISMIC RUNNER ⚡</h1>
+  <h1>SEISMIC RUNNER</h1>
   <p class="subtitle">Guide the mighty Rock Bot through seismic barriers!<br>Collect coins, grab power-ups, survive!</p>
   <div class="controls-hint">
     <span>SPACE</span> / <span>↑</span> = Jump &nbsp;|&nbsp; <span>↓</span> = Duck &nbsp;|&nbsp; <span>P</span> = Pause<br>
@@ -489,9 +493,9 @@ body {
     <span class="hud-label">High Score</span>
     <span class="hud-val" id="highVal">0</span>
   </div>
-  <div class="hud-item">
-    <span class="hud-label">Coins</span>
-    <span class="hud-val" id="coinVal">0</span>
+  <div class="hud-item" id="coinItem" onclick="toggleCoins()" style="cursor:pointer; user-select:none;" title="Click to reveal">
+    <span class="hud-label">Coins 🔒</span>
+    <span class="hud-val" id="coinVal" style="filter:blur(6px); transition: filter 0.3s;">0</span>
   </div>
   <div class="hud-item">
     <span class="hud-label">Lives</span>
@@ -633,12 +637,31 @@ const seismicBg   = document.getElementById("seismicBg");
 const scoreEl     = document.getElementById("scoreVal");
 const highEl      = document.getElementById("highVal");
 const coinEl      = document.getElementById("coinVal");
+const coinLabel   = document.querySelector("#coinItem .hud-label");
 const livesEl     = document.getElementById("livesDisplay");
 const levelEl     = document.getElementById("levelVal");
 const gameOverEl  = document.getElementById("gameOver");
 const finalScoreEl= document.getElementById("finalScore");
 const finalHighEl = document.getElementById("finalHigh");
 const finalCoinsEl= document.getElementById("finalCoins");
+
+// ── Coins reveal toggle ──
+let coinsRevealed = false;
+let hideCoinsTimer = null;
+function toggleCoins() {
+  coinsRevealed = !coinsRevealed;
+  coinEl.style.filter = coinsRevealed ? "blur(0px)" : "blur(6px)";
+  coinLabel.textContent = coinsRevealed ? "Coins 🔓" : "Coins 🔒";
+  // Auto-hide after 3 seconds
+  clearTimeout(hideCoinsTimer);
+  if (coinsRevealed) {
+    hideCoinsTimer = setTimeout(() => {
+      coinsRevealed = false;
+      coinEl.style.filter = "blur(6px)";
+      coinLabel.textContent = "Coins 🔒";
+    }, 3000);
+  }
+}
 const finalLevelEl= document.getElementById("finalLevel");
 const messageEl   = document.getElementById("message");
 const pauseEl     = document.getElementById("pauseOverlay");
