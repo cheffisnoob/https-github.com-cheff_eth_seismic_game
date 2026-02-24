@@ -3,139 +3,149 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Seismic Click Challenge</title>
+<title>Seismic Runner</title>
 
 <style>
     body {
         margin: 0;
-        background: #0d0f1a;
+        background: #f0f0f0;
         font-family: Arial, sans-serif;
-        color: white;
-        text-align: center;
         overflow: hidden;
-    }
-
-    h1 {
-        margin-top: 20px;
-        font-size: 28px;
-    }
-
-    #scoreBoard {
-        font-size: 18px;
-        margin: 10px;
+        user-select: none;
     }
 
     #gameArea {
         position: relative;
         width: 100vw;
-        height: 80vh;
+        height: 200px;
+        background: #fff;
+        border-top: 3px solid #333;
+        overflow: hidden;
+        margin-top: 50px;
     }
 
     #logo {
         position: absolute;
-        width: 80px;
-        cursor: pointer;
-        display: none;
-        transition: transform 0.1s;
+        bottom: 0;
+        left: 50px;
+        width: 50px;
+        transition: bottom 0.2s;
     }
 
-    #logo:hover {
-        transform: scale(1.1);
+    .obstacle {
+        position: absolute;
+        bottom: 0;
+        width: 20px;
+        height: 40px;
+        background: #333;
     }
 
-    #startBtn {
-        padding: 10px 20px;
-        font-size: 16px;
-        background: #6c5ce7;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-    }
-
-    #startBtn:hover {
-        background: #5a4bd6;
+    #score {
+        font-size: 20px;
+        margin-left: 20px;
     }
 </style>
 </head>
 
 <body>
 
-<h1>⚡ Seismic Click Challenge ⚡</h1>
-
-<div id="scoreBoard">
-    Score: <span id="score">0</span> |
-    Best Reaction: <span id="bestTime">0</span> ms
-</div>
-
-<button id="startBtn">Start Game</button>
-
+<h1>Seismic Runner</h1>
+<div id="score">Score: 0</div>
 <div id="gameArea">
-    <!-- Your uploaded Seismic logo -->
     <img id="logo" src="logo.jpeg">
 </div>
 
 <script>
-let score = 0;
-let bestTime = 0;
-let gameSpeed = 2000;
-let appearTime;
-let timeout;
-
 const logo = document.getElementById("logo");
+const gameArea = document.getElementById("gameArea");
 const scoreDisplay = document.getElementById("score");
-const bestDisplay = document.getElementById("bestTime");
-const startBtn = document.getElementById("startBtn");
 
-function randomPosition() {
-    const x = Math.random() * (window.innerWidth - 100);
-    const y = Math.random() * (window.innerHeight - 200);
-    logo.style.left = x + "px";
-    logo.style.top = y + "px";
+let isJumping = false;
+let jumpHeight = 80;
+let gravity = 5;
+let obstacles = [];
+let gameSpeed = 5;
+let score = 0;
+
+// Jump function
+function jump() {
+    if (isJumping) return;
+    isJumping = true;
+    let upInterval = setInterval(() => {
+        let logoBottom = parseInt(window.getComputedStyle(logo).bottom);
+        if (logoBottom >= jumpHeight) {
+            clearInterval(upInterval);
+            let downInterval = setInterval(() => {
+                let bottom = parseInt(window.getComputedStyle(logo).bottom);
+                if (bottom <= 0) {
+                    clearInterval(downInterval);
+                    isJumping = false;
+                    logo.style.bottom = '0px';
+                } else {
+                    logo.style.bottom = (bottom - gravity) + 'px';
+                }
+            }, 20);
+        } else {
+            logo.style.bottom = (logoBottom + gravity) + 'px';
+        }
+    }, 20);
 }
 
-function showLogo() {
-    randomPosition();
-    logo.style.display = "block";
-    appearTime = Date.now();
-
-    timeout = setTimeout(() => {
-        logo.style.display = "none";
-        setTimeout(showLogo, 1000);
-    }, gameSpeed);
+// Create obstacles
+function createObstacle() {
+    let obstacle = document.createElement('div');
+    obstacle.classList.add('obstacle');
+    obstacle.style.left = gameArea.offsetWidth + 'px';
+    gameArea.appendChild(obstacle);
+    obstacles.push(obstacle);
 }
 
-logo.addEventListener("click", () => {
-    const reactionTime = Date.now() - appearTime;
+// Move obstacles
+function moveObstacles() {
+    obstacles.forEach((obstacle, index) => {
+        let left = parseInt(obstacle.style.left);
+        if (left < -20) {
+            obstacle.remove();
+            obstacles.splice(index, 1);
+        } else {
+            obstacle.style.left = (left - gameSpeed) + 'px';
+            // Collision detection
+            let logoLeft = parseInt(window.getComputedStyle(logo).left);
+            let logoBottom = parseInt(window.getComputedStyle(logo).bottom);
+            if (
+                left < logoLeft + logo.offsetWidth &&
+                left + obstacle.offsetWidth > logoLeft &&
+                logoBottom < obstacle.offsetHeight
+            ) {
+                alert('Game Over! Score: ' + score);
+                window.location.reload();
+            }
+        }
+    });
+}
 
+// Score update
+function updateScore() {
     score++;
-    scoreDisplay.textContent = score;
+    scoreDisplay.textContent = 'Score: ' + score;
+}
 
-    if (bestTime === 0 || reactionTime < bestTime) {
-        bestTime = reactionTime;
-        bestDisplay.textContent = bestTime;
+// Game loop
+setInterval(() => {
+    moveObstacles();
+    updateScore();
+}, 20);
+
+// Random obstacle creation
+setInterval(() => {
+    createObstacle();
+}, 2000);
+
+// Listen for jump
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.code === 'ArrowUp') {
+        jump();
     }
-
-    clearTimeout(timeout);
-    logo.style.display = "none";
-
-    if (gameSpeed > 600) {
-        gameSpeed -= 100; // Increase difficulty
-    }
-
-    setTimeout(showLogo, 800);
-});
-
-startBtn.addEventListener("click", () => {
-    score = 0;
-    bestTime = 0;
-    gameSpeed = 2000;
-
-    scoreDisplay.textContent = 0;
-    bestDisplay.textContent = 0;
-
-    startBtn.style.display = "none";
-    showLogo();
 });
 </script>
 
