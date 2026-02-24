@@ -1,2 +1,2 @@
-# https-github.com-cheff-seismic-click-game
+# https-github.com-cheffisnoob-seismic-click-game
 game
