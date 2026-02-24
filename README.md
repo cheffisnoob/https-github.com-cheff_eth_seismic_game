@@ -1,2 +1,2 @@
-# https-github.com-yourusername-seismic-click-game
+# https-github.com-cheff-seismic-click-game
 game
