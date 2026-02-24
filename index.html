@@ -1,113 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Seismic Runner</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seismic Runner – Rock Bot Edition</title>
 
-<style>
+  <style>
     body {
-        margin: 0;
-        background: #f0f0f0;
-        font-family: Arial, sans-serif;
-        overflow: hidden;
-        user-select: none;
+      margin: 0;
+      background: #0a0a15;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #eee;
+      overflow: hidden;
+      user-select: none;
     }
 
     /* Intro Screen */
     #intro {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: #0d0f1a;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-        text-align: center;
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0f0f2a, #1a0d2e);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      text-align: center;
+      padding: 20px;
     }
 
     #intro h1 {
-        font-size: 36px;
-        margin-bottom: 20px;
+      font-size: clamp(2.2rem, 8vw, 3.8rem);
+      margin: 0 0 1rem;
+      color: #a78bfa;
+      text-shadow: 0 0 20px rgba(167,139,250,0.6);
     }
 
     #intro p {
-        font-size: 18px;
-        margin-bottom: 30px;
+      font-size: clamp(1.1rem, 4vw, 1.4rem);
+      max-width: 600px;
+      margin: 0 0 2rem;
+      line-height: 1.5;
     }
 
     #playBtn {
-        padding: 20px 40px;
-        font-size: 22px;
-        background: #6c5ce7;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background 0.3s, transform 0.2s;
+      padding: 16px 48px;
+      font-size: 1.4rem;
+      background: #7c3aed;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
     #playBtn:hover {
-        background: #5a4bd6;
-        transform: scale(1.05);
+      background: #6d28d9;
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 10px 25px rgba(109,40,217,0.5);
+    }
+
+    /* Score */
+    #score {
+      position: fixed;
+      top: 20px;
+      left: 30px;
+      font-size: 1.6rem;
+      font-weight: bold;
+      z-index: 50;
+      text-shadow: 0 2px 6px #000;
     }
 
     /* Game Area */
     #gameArea {
-        position: relative;
-        width: 100vw;
-        height: 250px;
-        background: #fff;
-        border-top: 3px solid #333;
-        overflow: hidden;
-        margin-top: 50px;
+      position: relative;
+      width: 100vw;
+      height: 320px;
+      background: linear-gradient(to bottom, #444, #222);
+      border-top: 5px solid #111;
+      overflow: hidden;
+      margin-top: 80px;
     }
 
-    /* New Character */
+    /* Rock Bot character */
     #character {
-        position: absolute;
-        bottom: 0;
-        left: 50px;
-        width: 80px;
-        transition: bottom 0.2s;
+      position: absolute;
+      bottom: 0;
+      left: 70px;
+      width: 110px;           /* larger to suit chunky bot design */
+      height: auto;
+      image-rendering: crisp-edges; /* optional – looks better on pixel-ish art */
+      transition: bottom 0.18s ease-out;
     }
 
     .obstacle {
-        position: absolute;
-        bottom: 0;
-        width: 20px;
-        height: 40px;
-        background: #333;
+      position: absolute;
+      bottom: 0;
+      width: 28px;
+      height: 70px;           /* taller so big character must actually jump */
+      background: #2d2d2d;
+      border: 3px solid #111;
+      border-radius: 6px 6px 0 0;
+      box-shadow: 0 4px 10px #0008;
     }
-
-    #score {
-        font-size: 20px;
-        margin-left: 20px;
-    }
-</style>
+  </style>
 </head>
-
 <body>
 
-<!-- Intro Screen -->
 <div id="intro">
-    <h1>⚡ Seismic Runner ⚡</h1>
-    <p>Jump over obstacles by pressing <strong>Space</strong> or <strong>Up Arrow</strong>.<br>
-    Score as much as you can before hitting an obstacle!</p>
-    <button id="playBtn">Play</button>
+  <h1>⚡ Seismic Runner ⚡</h1>
+  <p>Help the mighty Rock Bot jump over seismic barriers!<br>
+     Press <strong>SPACE</strong> or <strong>↑ Arrow</strong> to jump.<br>
+     Survive as long as possible!</p>
+  <button id="playBtn">Start Running</button>
 </div>
 
-<!-- Score Display -->
 <div id="score">Score: 0</div>
 
-<!-- Game Area -->
 <div id="gameArea">
-    <img id="character" src="character.jpeg">
+  <!-- 
+    IMPORTANT: Replace the src below with the actual path/filename of your rock-bot image
+    Common options:
+      src="WhatsApp Image 2026-02-24 at 04.06.18.jpeg"
+      src="rock-bot.png"
+      src="./character.png"
+      or use base64 data URL if embedding directly
+  -->
+  <img id="character" src="WhatsApp Image 2026-02-24 at 04.06.18.jpeg" alt="Rock Bot">
 </div>
 
 <script>
@@ -118,106 +137,101 @@ const intro = document.getElementById("intro");
 const playBtn = document.getElementById("playBtn");
 
 let isJumping = false;
-let jumpHeight = 100;
-let gravity = 5;
+let jumpHeight = 140;       // higher jump for bigger character
+let gravity = 6;
 let obstacles = [];
-let gameSpeed = 5;
+let gameSpeed = 6;          // slightly faster for more challenge
 let score = 0;
-let gameInterval;
-let obstacleInterval;
+let gameRunning = false;
 
-// Jump function
+let gameInterval, obstacleInterval;
+
 function jump() {
-    if (isJumping) return;
-    isJumping = true;
-    let upInterval = setInterval(() => {
-        let charBottom = parseInt(window.getComputedStyle(character).bottom);
-        if (charBottom >= jumpHeight) {
-            clearInterval(upInterval);
-            let downInterval = setInterval(() => {
-                let bottom = parseInt(window.getComputedStyle(character).bottom);
-                if (bottom <= 0) {
-                    clearInterval(downInterval);
-                    isJumping = false;
-                    character.style.bottom = '0px';
-                } else {
-                    character.style.bottom = (bottom - gravity) + 'px';
-                }
-            }, 20);
-        } else {
-            character.style.bottom = (charBottom + gravity) + 'px';
-        }
-    }, 20);
-}
+  if (isJumping || !gameRunning) return;
+  isJumping = true;
 
-// Create obstacles
-function createObstacle() {
-    let obstacle = document.createElement('div');
-    obstacle.classList.add('obstacle');
-    obstacle.style.left = gameArea.offsetWidth + 'px';
-    gameArea.appendChild(obstacle);
-    obstacles.push(obstacle);
-}
+  let velocity = 14; // initial upward speed
+  let pos = 0;
 
-// Move obstacles
-function moveObstacles() {
-    obstacles.forEach((obstacle, index) => {
-        let left = parseInt(obstacle.style.left);
-        if (left < -20) {
-            obstacle.remove();
-            obstacles.splice(index, 1);
-        } else {
-            obstacle.style.left = (left - gameSpeed) + 'px';
-            // Collision detection
-            let charLeft = parseInt(window.getComputedStyle(character).left);
-            let charBottom = parseInt(window.getComputedStyle(character).bottom);
-            if (
-                left < charLeft + character.offsetWidth &&
-                left + obstacle.offsetWidth > charLeft &&
-                charBottom < obstacle.offsetHeight
-            ) {
-                alert('Game Over! Score: ' + score);
-                window.location.reload();
-            }
-        }
-    });
-}
+  const jumpPhysics = setInterval(() => {
+    pos += velocity;
+    velocity -= gravity * 0.4; // smoother gravity curve
 
-// Score update
-function updateScore() {
-    score++;
-    scoreDisplay.textContent = 'Score: ' + score;
-}
+    character.style.bottom = pos + "px";
 
-// Game loop
-function gameLoop() {
-    gameInterval = setInterval(() => {
-        moveObstacles();
-        updateScore();
-    }, 20);
-}
-
-// Random obstacle creation loop
-function obstacleLoop() {
-    obstacleInterval = setInterval(() => {
-        createObstacle();
-    }, 2000);
-}
-
-// Start game on Play button click
-playBtn.addEventListener('click', () => {
-    intro.style.display = 'none';
-    gameLoop();
-    obstacleLoop();
-});
-
-// Listen for jump
-document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' || e.code === 'ArrowUp') {
-        jump();
+    if (pos <= 0) {
+      clearInterval(jumpPhysics);
+      character.style.bottom = "0px";
+      isJumping = false;
     }
+  }, 16); // ~60 fps
+}
+
+function createObstacle() {
+  const obs = document.createElement("div");
+  obs.className = "obstacle";
+  obs.style.left = gameArea.offsetWidth + "px";
+  gameArea.appendChild(obs);
+  obstacles.push(obs);
+}
+
+function moveObstacles() {
+  obstacles.forEach((obs, i) => {
+    let left = parseFloat(obs.style.left) || gameArea.offsetWidth;
+    left -= gameSpeed;
+    obs.style.left = left + "px";
+
+    if (left < -30) {
+      obs.remove();
+      obstacles.splice(i, 1);
+      return;
+    }
+
+    // Simple AABB collision
+    const charRect = character.getBoundingClientRect();
+    const obsRect  = obs.getBoundingClientRect();
+
+    if (
+      charRect.left < obsRect.right &&
+      charRect.right > obsRect.left &&
+      charRect.bottom > obsRect.top
+    ) {
+      endGame();
+    }
+  });
+}
+
+function updateScore() {
+  score++;
+  scoreDisplay.textContent = `Score: ${score}`;
+}
+
+function gameLoop() {
+  moveObstacles();
+  updateScore();
+}
+
+function endGame() {
+  clearInterval(gameInterval);
+  clearInterval(obstacleInterval);
+  gameRunning = false;
+  alert(`Game Over!\nFinal Score: ${score}`);
+  setTimeout(() => location.reload(), 800);
+}
+
+playBtn.onclick = () => {
+  intro.style.display = "none";
+  gameRunning = true;
+  gameInterval    = setInterval(gameLoop, 20);
+  obstacleInterval = setInterval(createObstacle, 1800); // spawn every ~1.8s
+};
+
+document.addEventListener("keydown", e => {
+  if (e.code === "Space" || e.code === "ArrowUp") {
+    e.preventDefault();
+    jump();
+  }
 });
 </script>
-
 </body>
 </html>
