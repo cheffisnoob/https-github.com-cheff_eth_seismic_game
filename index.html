@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seismic Click Challenge</title>
+
+<style>
+    body {
+        margin: 0;
+        background: #0d0f1a;
+        font-family: Arial, sans-serif;
+        color: white;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    h1 {
+        margin-top: 20px;
+        font-size: 28px;
+    }
+
+    #scoreBoard {
+        font-size: 18px;
+        margin: 10px;
+    }
+
+    #gameArea {
+        position: relative;
+        width: 100vw;
+        height: 80vh;
+    }
+
+    #logo {
+        position: absolute;
+        width: 80px;
+        cursor: pointer;
+        display: none;
+        transition: transform 0.1s;
+    }
+
+    #logo:hover {
+        transform: scale(1.1);
+    }
+
+    #startBtn {
+        padding: 10px 20px;
+        font-size: 16px;
+        background: #6c5ce7;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    #startBtn:hover {
+        background: #5a4bd6;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>⚡ Seismic Click Challenge ⚡</h1>
+
+<div id="scoreBoard">
+    Score: <span id="score">0</span> |
+    Best Reaction: <span id="bestTime">0</span> ms
+</div>
+
+<button id="startBtn">Start Game</button>
+
+<div id="gameArea">
+    <!-- Replace src with Seismic logo -->
+    <img id="logo" src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Logo_placeholder.png">
+</div>
+
+<script>
+let score = 0;
+let bestTime = 0;
+let gameSpeed = 2000;
+let appearTime;
+let timeout;
+
+const logo = document.getElementById("logo");
+const scoreDisplay = document.getElementById("score");
+const bestDisplay = document.getElementById("bestTime");
+const startBtn = document.getElementById("startBtn");
+const gameArea = document.getElementById("gameArea");
+
+function randomPosition() {
+    const x = Math.random() * (window.innerWidth - 100);
+    const y = Math.random() * (window.innerHeight - 200);
+    logo.style.left = x + "px";
+    logo.style.top = y + "px";
+}
+
+function showLogo() {
+    randomPosition();
+    logo.style.display = "block";
+    appearTime = Date.now();
+
+    timeout = setTimeout(() => {
+        logo.style.display = "none";
+        setTimeout(showLogo, 1000);
+    }, gameSpeed);
+}
+
+logo.addEventListener("click", () => {
+    const reactionTime = Date.now() - appearTime;
+
+    score++;
+    scoreDisplay.textContent = score;
+
+    if (bestTime === 0 || reactionTime < bestTime) {
+        bestTime = reactionTime;
+        bestDisplay.textContent = bestTime;
+    }
+
+    clearTimeout(timeout);
+    logo.style.display = "none";
+
+    if (gameSpeed > 600) {
+        gameSpeed -= 100; // Increase difficulty
+    }
+
+    setTimeout(showLogo, 800);
+});
+
+startBtn.addEventListener("click", () => {
+    score = 0;
+    bestTime = 0;
+    gameSpeed = 2000;
+
+    scoreDisplay.textContent = 0;
+    bestDisplay.textContent = 0;
+
+    startBtn.style.display = "none";
+    showLogo();
+});
+</script>
+
+</body>
+</html>
