@@ -14,6 +14,7 @@
         user-select: none;
     }
 
+    /* Intro Screen */
     #intro {
         position: fixed;
         top: 0;
@@ -40,35 +41,39 @@
         margin-bottom: 30px;
     }
 
-    #startBtn {
-        padding: 15px 30px;
-        font-size: 18px;
+    #playBtn {
+        padding: 20px 40px;
+        font-size: 22px;
         background: #6c5ce7;
         color: white;
         border: none;
-        border-radius: 6px;
+        border-radius: 8px;
         cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
     }
 
-    #startBtn:hover {
+    #playBtn:hover {
         background: #5a4bd6;
+        transform: scale(1.05);
     }
 
+    /* Game Area */
     #gameArea {
         position: relative;
         width: 100vw;
-        height: 200px;
+        height: 250px;
         background: #fff;
         border-top: 3px solid #333;
         overflow: hidden;
         margin-top: 50px;
     }
 
-    #logo {
+    /* New Character */
+    #character {
         position: absolute;
         bottom: 0;
         left: 50px;
-        width: 50px;
+        width: 80px;
         transition: bottom 0.2s;
     }
 
@@ -94,7 +99,7 @@
     <h1>⚡ Seismic Runner ⚡</h1>
     <p>Jump over obstacles by pressing <strong>Space</strong> or <strong>Up Arrow</strong>.<br>
     Score as much as you can before hitting an obstacle!</p>
-    <button id="startBtn">Start Game</button>
+    <button id="playBtn">Play</button>
 </div>
 
 <!-- Score Display -->
@@ -102,18 +107,18 @@
 
 <!-- Game Area -->
 <div id="gameArea">
-    <img id="logo" src="logo.jpeg">
+    <img id="character" src="character.jpeg">
 </div>
 
 <script>
-const logo = document.getElementById("logo");
+const character = document.getElementById("character");
 const gameArea = document.getElementById("gameArea");
 const scoreDisplay = document.getElementById("score");
 const intro = document.getElementById("intro");
-const startBtn = document.getElementById("startBtn");
+const playBtn = document.getElementById("playBtn");
 
 let isJumping = false;
-let jumpHeight = 80;
+let jumpHeight = 100;
 let gravity = 5;
 let obstacles = [];
 let gameSpeed = 5;
@@ -126,21 +131,21 @@ function jump() {
     if (isJumping) return;
     isJumping = true;
     let upInterval = setInterval(() => {
-        let logoBottom = parseInt(window.getComputedStyle(logo).bottom);
-        if (logoBottom >= jumpHeight) {
+        let charBottom = parseInt(window.getComputedStyle(character).bottom);
+        if (charBottom >= jumpHeight) {
             clearInterval(upInterval);
             let downInterval = setInterval(() => {
-                let bottom = parseInt(window.getComputedStyle(logo).bottom);
+                let bottom = parseInt(window.getComputedStyle(character).bottom);
                 if (bottom <= 0) {
                     clearInterval(downInterval);
                     isJumping = false;
-                    logo.style.bottom = '0px';
+                    character.style.bottom = '0px';
                 } else {
-                    logo.style.bottom = (bottom - gravity) + 'px';
+                    character.style.bottom = (bottom - gravity) + 'px';
                 }
             }, 20);
         } else {
-            logo.style.bottom = (logoBottom + gravity) + 'px';
+            character.style.bottom = (charBottom + gravity) + 'px';
         }
     }, 20);
 }
@@ -164,12 +169,12 @@ function moveObstacles() {
         } else {
             obstacle.style.left = (left - gameSpeed) + 'px';
             // Collision detection
-            let logoLeft = parseInt(window.getComputedStyle(logo).left);
-            let logoBottom = parseInt(window.getComputedStyle(logo).bottom);
+            let charLeft = parseInt(window.getComputedStyle(character).left);
+            let charBottom = parseInt(window.getComputedStyle(character).bottom);
             if (
-                left < logoLeft + logo.offsetWidth &&
-                left + obstacle.offsetWidth > logoLeft &&
-                logoBottom < obstacle.offsetHeight
+                left < charLeft + character.offsetWidth &&
+                left + obstacle.offsetWidth > charLeft &&
+                charBottom < obstacle.offsetHeight
             ) {
                 alert('Game Over! Score: ' + score);
                 window.location.reload();
@@ -199,8 +204,8 @@ function obstacleLoop() {
     }, 2000);
 }
 
-// Start game
-startBtn.addEventListener('click', () => {
+// Start game on Play button click
+playBtn.addEventListener('click', () => {
     intro.style.display = 'none';
     gameLoop();
     obstacleLoop();
