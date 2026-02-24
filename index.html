@@ -9,19 +9,12 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Rock Bot character colors as brand palette */
   --dawn: #FF6B35;
   --dusk: #5C2D91;
   --dusk-light: #8B5CF6;
   --cloud: #4A90D9;
   --navy: #1a0d05;
   --navy-mid: #2d1a0a;
-
-  --purple: var(--dusk);
-  --purple-light: var(--dusk-light);
-  --yellow: var(--dawn);
-  --bg: var(--navy);
-  --ground: var(--navy-mid);
   --neon: #d4a574;
 }
 
@@ -38,7 +31,138 @@ body {
   justify-content: center;
 }
 
-/* ── INTRO ── */
+/* ── NAME SCREEN ── */
+#nameScreen {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 25% 75%, rgba(184,133,90,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 78% 25%, rgba(122,79,45,0.5) 0%, transparent 50%),
+    linear-gradient(135deg, #1a0d05 0%, #2d1a0a 45%, #3a2010 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  text-align: center;
+  padding: 30px;
+  animation: fadeIn 0.5s ease;
+}
+
+#nameScreen h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(2rem, 7vw, 3.5rem);
+  font-weight: 900;
+  margin-bottom: 0.4rem;
+  color: #d4a574;
+  text-shadow: 0 0 30px rgba(212,165,116,0.7), 0 0 60px rgba(184,133,90,0.4);
+  letter-spacing: 2px;
+}
+
+#nameScreen .ns-sub {
+  color: #b8855a;
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+#nameScreen .ns-box {
+  background: rgba(58,32,16,0.6);
+  border: 1px solid rgba(140,92,51,0.7);
+  border-radius: 14px;
+  padding: 28px 36px;
+  width: min(420px, 90vw);
+  margin-bottom: 1.5rem;
+}
+
+#nameScreen label {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  color: #b8855a;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+#playerNameInput {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(26,13,5,0.8);
+  border: 2px solid #8c5c33;
+  border-radius: 8px;
+  color: #d4a574;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  outline: none;
+  transition: border-color 0.2s;
+  text-align: center;
+}
+#playerNameInput:focus { border-color: #d4a574; }
+#playerNameInput::placeholder { color: #5a3a1a; font-weight: 400; font-size: 0.85rem; }
+
+.ns-wallet {
+  margin-top: 14px;
+  padding: 10px;
+  background: rgba(212,165,116,0.08);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #b8855a;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.ns-wallet .wallet-amt { color: #d4a574; font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1rem; }
+
+#nameSubmitBtn {
+  padding: 13px 36px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: #8c5c33;
+  color: #fff;
+  border: 2px solid #d4a574;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#nameSubmitBtn:hover { background: #7a4f2d; box-shadow: 0 0 20px rgba(212,165,116,0.4); }
+
+/* leaderboard on name screen */
+.ns-leaderboard {
+  width: min(420px, 90vw);
+  background: rgba(58,32,16,0.4);
+  border: 1px solid rgba(140,92,51,0.4);
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+.ns-leaderboard h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  color: #b8855a;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.lb-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(140,92,51,0.2);
+  font-size: 0.82rem;
+}
+.lb-row:last-child { border-bottom: none; }
+.lb-rank { color: #8c5c33; width: 20px; }
+.lb-name { color: #d4a574; flex: 1; padding: 0 8px; }
+.lb-coins { color: #FFD700; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; }
+.lb-empty { color: #5a3a1a; font-size: 0.8rem; text-align: center; padding: 10px 0; }
+
+/* ── INTRO (difficulty) ── */
 #intro {
   position: fixed;
   inset: 0;
@@ -47,7 +171,7 @@ body {
     radial-gradient(ellipse at 78% 25%, rgba(122,79,45,0.5) 0%, transparent 50%),
     radial-gradient(ellipse at 55% 50%, rgba(58,32,16,0.3) 0%, transparent 65%),
     linear-gradient(135deg, #1a0d05 0%, #2d1a0a 45%, #3a2010 100%);
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -63,18 +187,36 @@ body {
   font-family: 'Orbitron', sans-serif;
   font-size: clamp(2rem, 7vw, 3.5rem);
   font-weight: 900;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
   color: #d4a574;
   text-shadow: 0 0 30px rgba(212,165,116,0.7), 0 0 60px rgba(184,133,90,0.4);
   letter-spacing: 2px;
 }
 
-#intro .subtitle {
-  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+#intro .player-greeting {
+  font-size: 0.85rem;
+  color: #8c5c33;
+  margin-bottom: 0.3rem;
+  letter-spacing: 1px;
+}
+
+#intro .total-coins-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(212,165,116,0.1);
+  border: 1px solid rgba(212,165,116,0.3);
+  border-radius: 20px;
+  padding: 6px 18px;
+  margin-bottom: 1.4rem;
+  font-size: 0.9rem;
   color: #b8855a;
-  margin-bottom: 1.5rem;
-  line-height: 1.7;
-  max-width: 500px;
+}
+#intro .total-coins-banner .tc-num {
+  font-family: 'Orbitron', sans-serif;
+  color: #FFD700;
+  font-weight: 700;
+  font-size: 1rem;
 }
 
 .controls-hint {
@@ -87,10 +229,9 @@ body {
   color: #c4a080;
   line-height: 1.8;
 }
-
 .controls-hint span { color: #d4a574; font-weight: bold; }
 
-.mode-buttons { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.mode-buttons { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px; }
 
 .mode-buttons button {
   padding: 13px 28px;
@@ -108,8 +249,21 @@ body {
 .btn-easy:hover { background: #145530; box-shadow: 0 0 20px rgba(39,165,96,0.4); }
 .btn-hard { background: #c0392b; color: #fff; border-color: #e74c3c; }
 .btn-hard:hover { background: #962d22; box-shadow: 0 0 20px rgba(231,76,60,0.4); }
-.btn-vhard { background: #1a0a00; color: #ff4500; border-color: #ff4500; border: 2px solid #ff4500; }
+.btn-vhard { background: #1a0a00; color: #ff4500; border-color: #ff4500; }
 .btn-vhard:hover { background: #2d1000; box-shadow: 0 0 20px rgba(255,69,0,0.6); }
+
+.btn-switch-player {
+  background: transparent;
+  color: #8c5c33;
+  border: 1px solid #5a3418;
+  border-radius: 6px;
+  padding: 7px 18px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-switch-player:hover { color: #d4a574; border-color: #8c5c33; }
 
 /* ── HUD ── */
 #hud {
@@ -118,7 +272,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
+  padding: 10px 20px;
   background: rgba(26,13,5,0.95);
   backdrop-filter: blur(6px);
   border-bottom: 2px solid #8c5c33;
@@ -127,9 +281,19 @@ body {
 }
 
 .hud-item { display: flex; flex-direction: column; align-items: center; }
-.hud-label { font-size: 0.55rem; letter-spacing: 2px; color: #b8855a; text-transform: uppercase; }
-.hud-val { font-size: 1.2rem; font-weight: 700; color: #d4a574; }
-#livesDisplay { color: #f87171; font-size: 1.3rem; letter-spacing: 3px; }
+.hud-label { font-size: 0.5rem; letter-spacing: 2px; color: #b8855a; text-transform: uppercase; }
+.hud-val { font-size: 1.1rem; font-weight: 700; color: #d4a574; }
+#livesDisplay { color: #f87171; font-size: 1.2rem; letter-spacing: 3px; }
+
+/* All-time coin display in HUD */
+#allTimeCoinsHud {
+  display: flex; flex-direction: column; align-items: center;
+  background: rgba(212,165,116,0.06);
+  border: 1px solid rgba(212,165,116,0.2);
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+#allTimeCoinsHud .hud-val { color: #FFD700; font-size: 1rem; }
 
 /* ── GAME WRAPPER ── */
 #gameWrapper {
@@ -151,7 +315,6 @@ body {
   border-bottom: 2px solid #8c5c33;
 }
 
-/* Stars bg */
 #gameArea::before {
   content: '';
   position: absolute;
@@ -166,7 +329,6 @@ body {
   pointer-events: none;
 }
 
-/* Scrolling SEISMIC watermark text in background */
 #seismicText {
   position: absolute;
   top: 50%;
@@ -189,35 +351,26 @@ body {
   100% { transform: translateY(-50%) translateX(-50%); }
 }
 
-/* Seismic grid floor */
 #seismicBg {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 200%;
-  height: 50px;
+  bottom: 0; left: 0;
+  width: 200%; height: 50px;
   background: repeating-linear-gradient(
     90deg,
-    rgba(140,92,51,0.5) 0,
-    rgba(140,92,51,0.5) 2px,
-    transparent 2px,
-    transparent 40px
+    rgba(140,92,51,0.5) 0, rgba(140,92,51,0.5) 2px,
+    transparent 2px, transparent 40px
   );
   animation: moveSeismic 1.2s linear infinite;
   z-index: 1;
 }
-
 @keyframes moveSeismic {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
-/* Ground line */
 #ground {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0; left: 0; right: 0;
   height: 4px;
   background: linear-gradient(90deg, #3a2010, #b8855a, #d4a574, #b8855a, #3a2010);
   background-size: 300%;
@@ -225,159 +378,110 @@ body {
   z-index: 2;
   box-shadow: 0 0 12px #8c5c33, 0 0 24px rgba(140,92,51,0.5);
 }
-
 @keyframes groundGlow { 0%{background-position:0%} 100%{background-position:200%} }
 
 /* ── CHARACTER ── */
 #character {
   position: absolute;
-  bottom: 4px;
-  left: 70px;
-  width: 72px;
-  height: 90px;
+  bottom: 4px; left: 70px;
+  width: 72px; height: 90px;
   z-index: 10;
   transition: filter 0.1s;
   image-rendering: crisp-edges;
 }
+#character svg { width: 100%; height: 100%; overflow: visible; animation: botWalk 0.35s ease-in-out infinite alternate; }
+@keyframes botWalk { from{transform:translateY(0px)} to{transform:translateY(3px)} }
 
-#character svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-/* Walking bounce animation on the SVG */
-#character svg { animation: botWalk 0.35s ease-in-out infinite alternate; }
-@keyframes botWalk {
-  from { transform: translateY(0px); }
-  to   { transform: translateY(3px); }
-}
-
-/* Left leg walk */
 #bot-leg-l { animation: legL 0.35s ease-in-out infinite alternate; transform-origin: 50% 0%; }
-@keyframes legL {
-  from { transform: rotate(-8deg); }
-  to   { transform: rotate(8deg); }
-}
-/* Right leg walks opposite */
+@keyframes legL { from{transform:rotate(-8deg)} to{transform:rotate(8deg)} }
 #bot-leg-r { animation: legR 0.35s ease-in-out infinite alternate; transform-origin: 50% 0%; }
-@keyframes legR {
-  from { transform: rotate(8deg); }
-  to   { transform: rotate(-8deg); }
-}
-
-/* Arm swing */
+@keyframes legR { from{transform:rotate(8deg)} to{transform:rotate(-8deg)} }
 #bot-arm-l { animation: armL 0.35s ease-in-out infinite alternate; transform-origin: 80% 20%; }
-@keyframes armL {
-  from { transform: rotate(6deg); }
-  to   { transform: rotate(-6deg); }
-}
+@keyframes armL { from{transform:rotate(6deg)} to{transform:rotate(-6deg)} }
 #bot-arm-r { animation: armR 0.35s ease-in-out infinite alternate; transform-origin: 20% 20%; }
-@keyframes armR {
-  from { transform: rotate(-6deg); }
-  to   { transform: rotate(6deg); }
-}
+@keyframes armR { from{transform:rotate(-6deg)} to{transform:rotate(6deg)} }
 
-#character.hit {
-  filter: brightness(2.5) saturate(0) sepia(1) hue-rotate(320deg);
-  animation: shake 0.3s ease;
-}
-@keyframes shake {
-  0%,100%{left:70px}
-  25%{left:64px}
-  75%{left:76px}
-}
+#character.hit { filter: brightness(2.5) saturate(0) sepia(1) hue-rotate(320deg); animation: shake 0.3s ease; }
+@keyframes shake { 0%,100%{left:70px} 25%{left:64px} 75%{left:76px} }
 
 /* ── OBSTACLES ── */
 .obstacle {
-  position: absolute;
-  bottom: 4px;
-  border-radius: 4px 4px 0 0;
-  z-index: 5;
+  position: absolute; bottom: 4px;
+  border-radius: 4px 4px 0 0; z-index: 5;
   background: linear-gradient(180deg, #5a3418, #2d1a0a);
   box-shadow: 0 0 8px rgba(58,32,16,0.8), inset 0 1px 0 rgba(212,165,116,0.15);
 }
-
 .obstacle::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: #b8855a;
-  border-radius: 4px 4px 0 0;
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: #b8855a; border-radius: 4px 4px 0 0;
   box-shadow: 0 0 8px #8c5c33;
 }
 
-/* coin */
 .coin {
-  position: absolute;
-  width: 22px; height: 22px;
-  border-radius: 50%;
+  position: absolute; width: 22px; height: 22px; border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #d4a574, #7a4f2d);
-  box-shadow: 0 0 10px rgba(212,165,116,0.8);
-  z-index: 6;
+  box-shadow: 0 0 10px rgba(212,165,116,0.8); z-index: 6;
   animation: coinBob 0.8s ease-in-out infinite alternate;
 }
 @keyframes coinBob { from{transform:translateY(0)} to{transform:translateY(-8px)} }
 
-/* ── PARTICLES ── */
 .particle {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 20;
+  position: absolute; border-radius: 50%; pointer-events: none; z-index: 20;
   animation: particleFade 0.6s ease-out forwards;
 }
 @keyframes particleFade {
-  0%   { opacity: 1; transform: scale(1) translate(0,0); }
-  100% { opacity: 0; transform: scale(0) translate(var(--dx), var(--dy)); }
+  0%   { opacity:1; transform:scale(1) translate(0,0); }
+  100% { opacity:0; transform:scale(0) translate(var(--dx), var(--dy)); }
 }
 
-/* ── POWER-UP ── */
 .powerup {
-  position: absolute;
-  width: 28px; height: 28px;
-  border-radius: 6px;
-  z-index: 6;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
+  position: absolute; width: 28px; height: 28px; border-radius: 6px; z-index: 6;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
   animation: powerupFloat 0.7s ease-in-out infinite alternate;
   box-shadow: 0 0 12px rgba(212,165,116,0.6);
-  background: rgba(140,92,51,0.25);
-  border: 2px solid #d4a574;
+  background: rgba(140,92,51,0.25); border: 2px solid #d4a574;
 }
 @keyframes powerupFloat { from{transform:translateY(0)} to{transform:translateY(-10px)} }
 
+/* ── COIN SAVE FLASH ── */
+.coin-save-flash {
+  position: fixed;
+  top: 65px; right: 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #FFD700;
+  background: rgba(26,13,5,0.9);
+  border: 1px solid rgba(255,215,0,0.4);
+  border-radius: 8px;
+  padding: 6px 14px;
+  z-index: 80;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+.coin-save-flash.show { opacity: 1; transform: translateY(0); }
+
 /* ── MESSAGES ── */
 #message {
-  position: fixed;
-  top: 50%;
-  left: 50%;
+  position: fixed; top: 50%; left: 50%;
   transform: translate(-50%,-50%);
   font-family: 'Orbitron', sans-serif;
   font-size: clamp(1.5rem, 5vw, 2.5rem);
-  font-weight: 900;
-  color: #d4a574;
+  font-weight: 900; color: #d4a574;
   text-shadow: 0 0 20px rgba(212,165,116,0.9);
-  pointer-events: none;
-  z-index: 80;
-  opacity: 0;
-  transition: opacity 0.3s;
-  text-align: center;
+  pointer-events: none; z-index: 80; opacity: 0;
+  transition: opacity 0.3s; text-align: center;
 }
 
-/* ── GAME OVER SCREEN ── */
+/* ── GAME OVER ── */
 #gameOver {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(26,13,5,0.95);
-  z-index: 90;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  text-align: center;
-  padding: 20px;
+  display: none; position: fixed; inset: 0;
+  background: rgba(26,13,5,0.95); z-index: 90;
+  align-items: center; justify-content: center;
+  flex-direction: column; text-align: center; padding: 20px;
 }
 #gameOver.show { display: flex; animation: fadeIn 0.4s ease; }
 
@@ -393,85 +497,121 @@ body {
   background: rgba(58,32,16,0.5);
   border: 1px solid #8c5c33;
   border-radius: 12px;
-  padding: 20px 40px;
-  margin-bottom: 2rem;
+  padding: 20px 40px; margin-bottom: 1.5rem;
 }
 
-#gameOver .stat-line {
-  font-size: 1.1rem;
-  margin: 6px 0;
-  color: #d4a574;
-}
+#gameOver .stat-line { font-size: 1.05rem; margin: 6px 0; color: #d4a574; }
 #gameOver .stat-line span { color: #b8855a; font-weight: bold; }
+#gameOver .stat-line.highlight { color: #FFD700; font-size: 1.2rem; }
+#gameOver .stat-line.highlight span { color: #FFD700; }
+
+/* all-time coins big display */
+.alltime-box {
+  background: rgba(255,215,0,0.07);
+  border: 1px solid rgba(255,215,0,0.3);
+  border-radius: 10px;
+  padding: 12px 28px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.alltime-box .at-label {
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  color: #b8855a;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.alltime-box .at-val {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #FFD700;
+  text-shadow: 0 0 20px rgba(255,215,0,0.5);
+}
+.alltime-box .at-player {
+  font-size: 0.75rem;
+  color: #8c5c33;
+  margin-top: 2px;
+}
+
+#gameOver .go-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
 #gameOver button {
-  padding: 14px 32px;
+  padding: 12px 28px;
   font-family: 'Orbitron', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 700;
-  background: #8c5c33;
-  color: #fff;
-  border: 2px solid #d4a574;
-  border-radius: 8px;
-  cursor: pointer;
-  letter-spacing: 1px;
-  transition: all 0.2s;
+  font-size: 0.85rem; font-weight: 700;
+  background: #8c5c33; color: #fff;
+  border: 2px solid #d4a574; border-radius: 8px;
+  cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
 }
 #gameOver button:hover { background: #7a4f2d; box-shadow: 0 0 20px rgba(140,92,51,0.6); }
+#gameOver .btn-secondary {
+  background: transparent; color: #8c5c33;
+  border-color: #5a3418;
+}
+#gameOver .btn-secondary:hover { color: #d4a574; border-color: #8c5c33; background: transparent; }
 
-/* Pause overlay */
+/* Pause */
 #pauseOverlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(26,13,5,0.8);
-  z-index: 70;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 3rem;
-  color: #d4a574;
-  text-shadow: 0 0 20px rgba(212,165,116,0.7);
+  display: none; position: fixed; inset: 0;
+  background: rgba(26,13,5,0.8); z-index: 70;
+  align-items: center; justify-content: center;
+  font-family: 'Orbitron', sans-serif; font-size: 3rem;
+  color: #d4a574; text-shadow: 0 0 20px rgba(212,165,116,0.7);
 }
 #pauseOverlay.show { display: flex; }
 
-/* mobile buttons */
+/* Mobile */
 #mobileControls {
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  gap: 16px;
-  z-index: 60;
+  display: none; position: fixed; bottom: 20px; gap: 16px; z-index: 60;
 }
-@media (max-width: 768px), (pointer: coarse) {
-  #mobileControls { display: flex; }
-}
+@media (max-width: 768px), (pointer: coarse) { #mobileControls { display: flex; } }
 .mob-btn {
-  width: 70px; height: 70px;
-  border-radius: 50%;
-  border: 3px solid #8c5c33;
-  background: rgba(140,92,51,0.2);
-  color: #d4a574;
-  font-size: 1.5rem;
-  cursor: pointer;
+  width: 70px; height: 70px; border-radius: 50%;
+  border: 3px solid #8c5c33; background: rgba(140,92,51,0.2);
+  color: #d4a574; font-size: 1.5rem; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  backdrop-filter: blur(4px);
-  transition: all 0.1s;
+  backdrop-filter: blur(4px); transition: all 0.1s;
   -webkit-tap-highlight-color: transparent;
 }
 .mob-btn:active { background: rgba(140,92,51,0.5); transform: scale(0.95); }
 
-/* shield effect */
 #character.shielded #shieldRing { opacity: 1 !important; }
 #character.shielded { filter: drop-shadow(0 0 8px #d4a574); }
 </style>
 </head>
 <body>
 
-<!-- INTRO -->
+<!-- NAME SCREEN -->
+<div id="nameScreen">
+  <h1>SEISMIC RUNNER</h1>
+  <p class="ns-sub">Enter your name to track your coins forever</p>
+
+  <div class="ns-box">
+    <label for="playerNameInput">🤖 Your Player Name</label>
+    <input type="text" id="playerNameInput" placeholder="Type your name..." maxlength="18" autocomplete="off" spellcheck="false"/>
+    <div class="ns-wallet" id="walletPreview">
+      <span style="color:#5a3a1a;">Enter a name to see your wallet</span>
+    </div>
+  </div>
+
+  <button id="nameSubmitBtn" onclick="submitName()">ENTER GAME →</button>
+
+  <div style="margin: 18px 0 10px; width: min(420px,90vw);">
+    <div class="ns-leaderboard">
+      <h3>🏆 All-Time Coin Leaders</h3>
+      <div id="lbList"><div class="lb-empty">Loading...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- INTRO (difficulty select) -->
 <div id="intro">
   <h1>SEISMIC RUNNER</h1>
-  <p class="subtitle">Guide the mighty Rock Bot through seismic barriers!<br>Collect coins, grab power-ups, survive!</p>
+  <p class="player-greeting" id="playerGreeting"></p>
+  <div class="total-coins-banner">
+    🪙 All-time coins: <span class="tc-num" id="introCoinTotal">0</span>
+  </div>
   <div class="controls-hint">
     <span>SPACE</span> / <span>↑</span> = Jump &nbsp;|&nbsp; <span>↓</span> = Duck &nbsp;|&nbsp; <span>P</span> = Pause<br>
     Double-jump supported! 🤖
@@ -481,6 +621,7 @@ body {
     <button class="btn-hard" onclick="startGame('hard')">Hard</button>
     <button class="btn-vhard" onclick="startGame('vhard')">Very Hard</button>
   </div>
+  <button class="btn-switch-player" onclick="switchPlayer()">↩ Switch Player</button>
 </div>
 
 <!-- HUD -->
@@ -493,9 +634,13 @@ body {
     <span class="hud-label">High Score</span>
     <span class="hud-val" id="highVal">0</span>
   </div>
-  <div class="hud-item" id="coinItem" onclick="toggleCoins()" style="cursor:pointer; user-select:none;" title="Click to reveal">
-    <span class="hud-label">Coins 🔒</span>
-    <span class="hud-val" id="coinVal" style="filter:blur(6px); transition: filter 0.3s;">0</span>
+  <div class="hud-item" id="coinItem" onclick="toggleCoins()" style="cursor:pointer;" title="Click to reveal">
+    <span class="hud-label">This Run 🔒</span>
+    <span class="hud-val" id="coinVal" style="filter:blur(6px); transition:filter 0.3s;">0</span>
+  </div>
+  <div class="hud-item" id="allTimeCoinsHud">
+    <span class="hud-label">Total 🪙</span>
+    <span class="hud-val" id="allTimeCoinVal">0</span>
   </div>
   <div class="hud-item">
     <span class="hud-label">Lives</span>
@@ -512,91 +657,52 @@ body {
   <div id="gameArea">
     <div id="seismicBg"></div>
     <div id="ground"></div>
-    <!-- Scrolling SEISMIC watermark -->
     <div id="seismicText">SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp; SEISMIC &nbsp;&nbsp;</div>
     <div id="character">
-      <!-- Rock Bot SVG — faithful to the stone golem character art -->
       <svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
-        <!-- LEFT ARM (big stone fist) -->
         <g id="bot-arm-l">
-          <!-- upper arm -->
           <polygon points="4,26 16,22 18,44 6,48" fill="#7a4f2d" stroke="#3a2010" stroke-width="1.2"/>
-          <!-- shoulder joint (dark gap) -->
           <ellipse cx="14" cy="24" rx="5" ry="4" fill="#1a1007"/>
-          <!-- forearm -->
           <polygon points="2,44 16,42 20,62 4,66" fill="#8c5c33" stroke="#3a2010" stroke-width="1.2"/>
-          <!-- big stone fist -->
           <polygon points="0,60 18,56 22,76 16,80 2,80" fill="#b8855a" stroke="#3a2010" stroke-width="1.2"/>
           <polygon points="2,76 10,72 18,74 16,80 2,80" fill="#9a6640" stroke="#3a2010" stroke-width="0.8"/>
         </g>
-
-        <!-- RIGHT ARM (big stone fist) -->
         <g id="bot-arm-r">
-          <!-- upper arm -->
           <polygon points="76,26 64,22 62,44 74,48" fill="#7a4f2d" stroke="#3a2010" stroke-width="1.2"/>
-          <!-- shoulder joint (dark gap) -->
           <ellipse cx="66" cy="24" rx="5" ry="4" fill="#1a1007"/>
-          <!-- forearm -->
           <polygon points="78,44 64,42 60,62 76,66" fill="#8c5c33" stroke="#3a2010" stroke-width="1.2"/>
-          <!-- big stone fist -->
           <polygon points="80,60 62,56 58,76 64,80 78,80" fill="#b8855a" stroke="#3a2010" stroke-width="1.2"/>
           <polygon points="78,76 70,72 62,74 64,80 78,80" fill="#9a6640" stroke="#3a2010" stroke-width="0.8"/>
         </g>
-
-        <!-- TORSO -->
         <polygon points="18,22 62,22 66,56 14,56" fill="#7a4f2d" stroke="#3a2010" stroke-width="1.5"/>
-        <!-- torso highlight facets -->
         <polygon points="18,22 38,20 38,38 20,40" fill="#9a6640" stroke="#3a2010" stroke-width="0.8"/>
         <polygon points="42,20 62,22 60,40 42,38" fill="#6b4426" stroke="#3a2010" stroke-width="0.8"/>
         <polygon points="14,56 38,52 38,56" fill="#5a3418" stroke="#3a2010" stroke-width="0.8"/>
-        <!-- X emblem removed -->
-
-        <!-- WAIST / HIP BELT -->
         <rect x="20" y="54" width="40" height="8" rx="2" fill="#1a1007"/>
         <rect x="24" y="55" width="32" height="6" rx="2" fill="#2d1f0e"/>
-
-        <!-- LEFT LEG -->
         <g id="bot-leg-l">
-          <!-- thigh -->
           <polygon points="22,62 38,62 36,76 20,76" fill="#8c5c33" stroke="#3a2010" stroke-width="1.2"/>
-          <!-- knee joint -->
           <polygon points="20,74 38,74 40,80 18,80" fill="#6b4426" stroke="#3a2010" stroke-width="1"/>
-          <!-- shin -->
           <polygon points="18,78 40,78 38,90 20,90" fill="#7a4f2d" stroke="#3a2010" stroke-width="1.2"/>
-          <!-- foot -->
           <polygon points="16,88 42,88 44,98 14,98" fill="#b8855a" stroke="#3a2010" stroke-width="1.2"/>
           <polygon points="16,94 28,90 40,92 44,98 14,98" fill="#9a6640" stroke="#3a2010" stroke-width="0.8"/>
         </g>
-
-        <!-- RIGHT LEG -->
         <g id="bot-leg-r">
-          <!-- thigh -->
           <polygon points="58,62 42,62 44,76 60,76" fill="#8c5c33" stroke="#3a2010" stroke-width="1.2"/>
-          <!-- knee joint -->
           <polygon points="60,74 42,74 40,80 62,80" fill="#6b4426" stroke="#3a2010" stroke-width="1"/>
-          <!-- shin -->
           <polygon points="62,78 40,78 42,90 60,90" fill="#7a4f2d" stroke="#3a2010" stroke-width="1.2"/>
-          <!-- foot -->
           <polygon points="64,88 38,88 36,98 66,98" fill="#b8855a" stroke="#3a2010" stroke-width="1.2"/>
           <polygon points="64,94 52,90 40,92 36,98 66,98" fill="#9a6640" stroke="#3a2010" stroke-width="0.8"/>
         </g>
-
-        <!-- HEAD -->
-        <!-- head base (rounded stone) -->
         <polygon points="26,6 54,6 58,22 22,22" fill="#7a4f2d" stroke="#3a2010" stroke-width="1.5"/>
-        <!-- head top facets -->
         <polygon points="28,6 40,2 52,6 54,14 26,14" fill="#9a6640" stroke="#3a2010" stroke-width="0.8"/>
         <polygon points="30,14 50,14 54,22 26,22" fill="#6b4426" stroke="#3a2010" stroke-width="0.8"/>
-        <!-- left eye -->
         <circle cx="33" cy="13" r="3.5" fill="#fff"/>
         <circle cx="33" cy="13" r="2" fill="#1a1007"/>
         <circle cx="32.3" cy="12.3" r="0.7" fill="#fff" opacity="0.9"/>
-        <!-- right eye -->
         <circle cx="47" cy="13" r="3.5" fill="#fff"/>
         <circle cx="47" cy="13" r="2" fill="#1a1007"/>
         <circle cx="46.3" cy="12.3" r="0.7" fill="#fff" opacity="0.9"/>
-
-        <!-- Shielded glow ring (hidden by default, shown via CSS) -->
         <circle id="shieldRing" cx="40" cy="50" r="44" fill="none" stroke="#4A90D9" stroke-width="3" opacity="0" stroke-dasharray="8 4">
           <animate attributeName="stroke-dashoffset" from="0" to="48" dur="1s" repeatCount="indefinite"/>
         </circle>
@@ -605,10 +711,13 @@ body {
   </div>
 </div>
 
-<!-- Message overlay -->
+<!-- Coin save flash -->
+<div class="coin-save-flash" id="coinSaveFlash"></div>
+
+<!-- Message -->
 <div id="message"></div>
 
-<!-- PAUSE -->
+<!-- Pause -->
 <div id="pauseOverlay" class="pauseOverlay">⏸ PAUSED</div>
 
 <!-- GAME OVER -->
@@ -617,71 +726,194 @@ body {
   <div class="final-stats">
     <div class="stat-line">Score: <span id="finalScore">0</span></div>
     <div class="stat-line">High Score: <span id="finalHigh">0</span></div>
-    <div class="stat-line">Coins Collected: <span id="finalCoins">0</span></div>
+    <div class="stat-line">Coins This Run: <span id="finalCoins">0</span></div>
     <div class="stat-line">Level Reached: <span id="finalLevel">1</span></div>
   </div>
-  <button onclick="restartGame()">🔄 Play Again</button>
+  <div class="alltime-box">
+    <div class="at-label">All-Time Coin Wallet</div>
+    <div class="at-val" id="goAllTimeCoins">0</div>
+    <div class="at-player" id="goPlayerName"></div>
+  </div>
+  <div class="go-buttons">
+    <button onclick="restartGame()">🔄 Play Again</button>
+    <button class="btn-secondary" onclick="switchPlayer()">↩ Switch Player</button>
+  </div>
 </div>
 
 <!-- Mobile controls -->
 <div id="mobileControls">
-  <button class="mob-btn" id="duckBtn" ontouchstart="startDuck()" ontouchend="stopDuck()">⬇️</button>
+  <button class="mob-btn" ontouchstart="startDuck()" ontouchend="stopDuck()">⬇️</button>
   <button class="mob-btn" ontouchstart="jump()">⬆️</button>
 </div>
 
 <script>
 // ── Elements ──
-const character   = document.getElementById("character");
-const gameArea    = document.getElementById("gameArea");
-const seismicBg   = document.getElementById("seismicBg");
-const scoreEl     = document.getElementById("scoreVal");
-const highEl      = document.getElementById("highVal");
-const coinEl      = document.getElementById("coinVal");
-const coinLabel   = document.querySelector("#coinItem .hud-label");
-const livesEl     = document.getElementById("livesDisplay");
-const levelEl     = document.getElementById("levelVal");
-const gameOverEl  = document.getElementById("gameOver");
-const finalScoreEl= document.getElementById("finalScore");
-const finalHighEl = document.getElementById("finalHigh");
-const finalCoinsEl= document.getElementById("finalCoins");
+const character    = document.getElementById("character");
+const gameArea     = document.getElementById("gameArea");
+const seismicBg    = document.getElementById("seismicBg");
+const scoreEl      = document.getElementById("scoreVal");
+const highEl       = document.getElementById("highVal");
+const coinEl       = document.getElementById("coinVal");
+const coinLabel    = document.querySelector("#coinItem .hud-label");
+const allTimeCoinEl= document.getElementById("allTimeCoinVal");
+const livesEl      = document.getElementById("livesDisplay");
+const levelEl      = document.getElementById("levelVal");
+const gameOverEl   = document.getElementById("gameOver");
+const finalScoreEl = document.getElementById("finalScore");
+const finalHighEl  = document.getElementById("finalHigh");
+const finalCoinsEl = document.getElementById("finalCoins");
+const finalLevelEl = document.getElementById("finalLevel");
+const goAllTimeEl  = document.getElementById("goAllTimeCoins");
+const goPlayerNameEl = document.getElementById("goPlayerName");
+const messageEl    = document.getElementById("message");
+const pauseEl      = document.getElementById("pauseOverlay");
+const introEl      = document.getElementById("intro");
+const nameScreenEl = document.getElementById("nameScreen");
+const coinSaveFlash= document.getElementById("coinSaveFlash");
+const lbListEl     = document.getElementById("lbList");
+
+// ── Player state ──
+let currentPlayer = null;   // player name string
+let allTimeCoins  = 0;       // loaded from storage
+
+// ── Storage helpers ──
+async function loadPlayerCoins(name) {
+  const key = "player:" + name.toLowerCase().replace(/\s+/g, "_");
+  try {
+    const res = await window.storage.get(key, true); // shared=true so any device with same name sees it
+    if (res && res.value) {
+      const data = JSON.parse(res.value);
+      return data.totalCoins || 0;
+    }
+  } catch(e) {}
+  return 0;
+}
+
+async function savePlayerCoins(name, total) {
+  const key = "player:" + name.toLowerCase().replace(/\s+/g, "_");
+  try {
+    await window.storage.set(key, JSON.stringify({ name, totalCoins: total, updated: Date.now() }), true);
+  } catch(e) {}
+}
+
+async function loadLeaderboard() {
+  try {
+    const res = await window.storage.list("player:", true);
+    if (!res || !res.keys || res.keys.length === 0) return [];
+    const players = [];
+    for (const k of res.keys) {
+      try {
+        const r = await window.storage.get(k, true);
+        if (r && r.value) {
+          const d = JSON.parse(r.value);
+          players.push({ name: d.name, totalCoins: d.totalCoins || 0 });
+        }
+      } catch(e) {}
+    }
+    players.sort((a,b) => b.totalCoins - a.totalCoins);
+    return players.slice(0, 8);
+  } catch(e) { return []; }
+}
+
+// ── Name screen ──
+const nameInput = document.getElementById("playerNameInput");
+const walletPreview = document.getElementById("walletPreview");
+
+nameInput.addEventListener("input", debounce(async () => {
+  const n = nameInput.value.trim();
+  if (!n) {
+    walletPreview.innerHTML = '<span style="color:#5a3a1a;">Enter a name to see your wallet</span>';
+    return;
+  }
+  walletPreview.innerHTML = '<span style="color:#5a3a1a;">Loading...</span>';
+  const c = await loadPlayerCoins(n);
+  if (c > 0) {
+    walletPreview.innerHTML = `Welcome back! 🪙 <span class="wallet-amt">${c.toLocaleString()}</span> coins saved`;
+  } else {
+    walletPreview.innerHTML = `<span style="color:#5a3a1a;">New player — start earning coins!</span>`;
+  }
+}, 400));
+
+nameInput.addEventListener("keydown", e => { if (e.key === "Enter") submitName(); });
+
+async function submitName() {
+  const n = nameInput.value.trim();
+  if (!n) { nameInput.style.borderColor = "#f87171"; setTimeout(() => nameInput.style.borderColor = "#8c5c33", 800); return; }
+  currentPlayer = n;
+  allTimeCoins = await loadPlayerCoins(n);
+  showIntro();
+}
+
+async function showIntro() {
+  nameScreenEl.style.display = "none";
+  introEl.style.display = "flex";
+  document.getElementById("playerGreeting").textContent = `Welcome, ${currentPlayer}!`;
+  document.getElementById("introCoinTotal").textContent = allTimeCoins.toLocaleString();
+}
+
+function switchPlayer() {
+  // Back to name screen
+  gameOverEl.classList.remove("show");
+  introEl.style.display = "none";
+  nameScreenEl.style.display = "flex";
+  nameInput.value = "";
+  walletPreview.innerHTML = '<span style="color:#5a3a1a;">Enter a name to see your wallet</span>';
+  currentPlayer = null;
+  loadLeaderboardUI();
+}
+
+async function loadLeaderboardUI() {
+  lbListEl.innerHTML = '<div class="lb-empty">Loading...</div>';
+  const players = await loadLeaderboard();
+  if (!players.length) {
+    lbListEl.innerHTML = '<div class="lb-empty">No players yet — be the first!</div>';
+    return;
+  }
+  const medals = ["🥇","🥈","🥉"];
+  lbListEl.innerHTML = players.map((p, i) => `
+    <div class="lb-row">
+      <span class="lb-rank">${medals[i] || (i+1)}</span>
+      <span class="lb-name">${escHtml(p.name)}</span>
+      <span class="lb-coins">🪙 ${p.totalCoins.toLocaleString()}</span>
+    </div>
+  `).join("");
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+// Load leaderboard on page start
+loadLeaderboardUI();
 
 // ── Coins reveal toggle ──
-let coinsRevealed = false;
-let hideCoinsTimer = null;
+let coinsRevealed = false, hideCoinsTimer = null;
 function toggleCoins() {
   coinsRevealed = !coinsRevealed;
   coinEl.style.filter = coinsRevealed ? "blur(0px)" : "blur(6px)";
-  coinLabel.textContent = coinsRevealed ? "Coins 🔓" : "Coins 🔒";
-  // Auto-hide after 3 seconds
+  coinLabel.textContent = coinsRevealed ? "This Run 🔓" : "This Run 🔒";
   clearTimeout(hideCoinsTimer);
   if (coinsRevealed) {
     hideCoinsTimer = setTimeout(() => {
       coinsRevealed = false;
       coinEl.style.filter = "blur(6px)";
-      coinLabel.textContent = "Coins 🔒";
+      coinLabel.textContent = "This Run 🔒";
     }, 3000);
   }
 }
-const finalLevelEl= document.getElementById("finalLevel");
-const messageEl   = document.getElementById("message");
-const pauseEl     = document.getElementById("pauseOverlay");
-const intro       = document.getElementById("intro");
 
-// ── State ──
+// ── Game State ──
 let score = 0, highScore = 0, coins = 0, lives = 3, level = 1;
 let gameSpeed = 5, gameRunning = false, paused = false;
 let obstacles = [], coinItems = [], powerups = [];
 let gameInterval, obstacleInterval, coinInterval, powerupInterval, difficultyInterval;
 let isJumping = false, jumpCount = 0, isDucking = false;
-let charBottom = 0; // track character's bottom position
+let charBottom = 0;
 let shielded = false, shieldTimer = null;
 let msgTimeout = null;
 
-const GROUND = 4; // px above ground
-const MAX_JUMP = 220;
-const GRAVITY = 0.55;
-const CHAR_W = 72, CHAR_H = 90;
-const DUCK_H = 50;
+const GROUND = 4, MAX_JUMP = 220, GRAVITY = 0.55;
+const CHAR_W = 72, CHAR_H = 90, DUCK_H = 50;
 
 const difficulties = {
   easy:  { speed: 4,  obstacleFreq: 2200, maxH: 80,  minH: 30 },
@@ -690,12 +922,11 @@ const difficulties = {
 };
 let cfg;
 
-// ── Lives display ──
-function updateLives() {
-  livesEl.textContent = "❤️".repeat(lives) || "💀";
+function updateLives() { livesEl.textContent = "❤️".repeat(lives) || "💀"; }
+function updateAllTimeDisplay() {
+  allTimeCoinEl.textContent = allTimeCoins.toLocaleString();
 }
 
-// ── Flash message ──
 function showMessage(text, color = "#facc15") {
   clearTimeout(msgTimeout);
   messageEl.textContent = text;
@@ -704,11 +935,16 @@ function showMessage(text, color = "#facc15") {
   msgTimeout = setTimeout(() => { messageEl.style.opacity = "0"; }, 1200);
 }
 
-// ── Start ──
+function showCoinSaveFlash(added) {
+  coinSaveFlash.textContent = `+${added} coins saved! 🪙 Total: ${allTimeCoins.toLocaleString()}`;
+  coinSaveFlash.classList.add("show");
+  setTimeout(() => coinSaveFlash.classList.remove("show"), 2500);
+}
+
 function startGame(mode) {
   cfg = difficulties[mode];
   gameSpeed = cfg.speed;
-  intro.style.display = "none";
+  introEl.style.display = "none";
 
   score = 0; coins = 0; lives = 3; level = 1;
   charBottom = GROUND;
@@ -716,17 +952,17 @@ function startGame(mode) {
   character.style.height = CHAR_H + "px";
   updateLives();
   updateHUD();
+  updateAllTimeDisplay();
 
   gameRunning = true;
-  gameInterval      = setInterval(gameLoop, 16);
-  obstacleInterval  = setInterval(spawnObstacle, cfg.obstacleFreq);
-  coinInterval      = setInterval(spawnCoin, 3000);
-  powerupInterval   = setInterval(spawnPowerup, 8000);
-  difficultyInterval= setInterval(increaseDifficulty, 10000);
+  gameInterval       = setInterval(gameLoop, 16);
+  obstacleInterval   = setInterval(spawnObstacle, cfg.obstacleFreq);
+  coinInterval       = setInterval(spawnCoin, 3000);
+  powerupInterval    = setInterval(spawnPowerup, 8000);
+  difficultyInterval = setInterval(increaseDifficulty, 10000);
 }
 
 function restartGame() {
-  // clear all
   [gameInterval, obstacleInterval, coinInterval, powerupInterval, difficultyInterval].forEach(clearInterval);
   obstacles.forEach(o => o.el && o.el.remove());
   coinItems.forEach(c => c.el && c.el.remove());
@@ -736,12 +972,10 @@ function restartGame() {
   isJumping = false; jumpCount = 0; isDucking = false; shielded = false;
   character.classList.remove("hit","shielded");
   clearTimeout(shieldTimer);
-  intro.style.display = "none";
-  // re-ask difficulty? just default easy for restart
-  startGame(cfg === difficulties.vhard ? 'vhard' : cfg === difficulties.hard ? 'hard' : 'easy');
+  const m = cfg === difficulties.vhard ? 'vhard' : cfg === difficulties.hard ? 'hard' : 'easy';
+  startGame(m);
 }
 
-// ── HUD ──
 function updateHUD() {
   scoreEl.textContent = score;
   highEl.textContent  = highScore;
@@ -749,7 +983,6 @@ function updateHUD() {
   levelEl.textContent = level;
 }
 
-// ── Difficulty progression ──
 function increaseDifficulty() {
   if (!gameRunning) return;
   level++;
@@ -758,22 +991,19 @@ function increaseDifficulty() {
   levelEl.textContent = level;
 }
 
-// ── Jump (double jump) ──
 function jump() {
   if (!gameRunning || paused) return;
   if (jumpCount >= 2) return;
   jumpCount++;
   isJumping = true;
-
   let velocity = jumpCount === 1 ? 15 : 11;
-  const jumpInterval = setInterval(() => {
+  const ji = setInterval(() => {
     charBottom += velocity;
     velocity -= GRAVITY;
-
     if (charBottom > MAX_JUMP) charBottom = MAX_JUMP;
     if (charBottom <= GROUND) {
       charBottom = GROUND;
-      clearInterval(jumpInterval);
+      clearInterval(ji);
       isJumping = false;
       jumpCount = 0;
       spawnLandParticles();
@@ -782,7 +1012,6 @@ function jump() {
   }, 16);
 }
 
-// ── Duck ──
 function startDuck() {
   if (!gameRunning || paused || isJumping) return;
   isDucking = true;
@@ -794,7 +1023,6 @@ function stopDuck() {
   character.style.height = CHAR_H + "px";
 }
 
-// ── Particles ──
 function spawnLandParticles() {
   for (let i = 0; i < 6; i++) {
     const p = document.createElement("div");
@@ -802,15 +1030,7 @@ function spawnLandParticles() {
     const size = Math.random() * 6 + 3;
     const angle = Math.random() * 360;
     const dist  = Math.random() * 40 + 20;
-    const dx = Math.cos(angle * Math.PI / 180) * dist;
-    const dy = Math.sin(angle * Math.PI / 180) * dist - 20;
-    p.style.cssText = `
-      width:${size}px; height:${size}px;
-      background: #FF6B35;
-      left: ${70 + 36}px;
-      bottom: 4px;
-      --dx: ${dx}px; --dy: ${dy}px;
-    `;
+    p.style.cssText = `width:${size}px;height:${size}px;background:#FF6B35;left:${106}px;bottom:4px;--dx:${Math.cos(angle*Math.PI/180)*dist}px;--dy:${Math.sin(angle*Math.PI/180)*dist-20}px;`;
     gameArea.appendChild(p);
     setTimeout(() => p.remove(), 600);
   }
@@ -823,20 +1043,12 @@ function spawnHitParticles(x, y) {
     const size = Math.random() * 8 + 4;
     const angle = Math.random() * 360;
     const dist  = Math.random() * 60 + 20;
-    const dx = Math.cos(angle * Math.PI / 180) * dist;
-    const dy = Math.sin(angle * Math.PI / 180) * dist - 30;
-    p.style.cssText = `
-      width:${size}px; height:${size}px;
-      background: #f87171;
-      left: ${x}px; top: ${y}px;
-      --dx: ${dx}px; --dy: ${dy}px;
-    `;
+    p.style.cssText = `width:${size}px;height:${size}px;background:#f87171;left:${x}px;top:${y}px;--dx:${Math.cos(angle*Math.PI/180)*dist}px;--dy:${Math.sin(angle*Math.PI/180)*dist-30}px;`;
     gameArea.appendChild(p);
     setTimeout(() => p.remove(), 700);
   }
 }
 
-// ── Spawn obstacles ──
 function spawnObstacle() {
   if (!gameRunning) return;
   const height = Math.floor(Math.random() * (cfg.maxH - cfg.minH + 1) + cfg.minH);
@@ -850,7 +1062,6 @@ function spawnObstacle() {
   obstacles.push({ el, x: gameArea.offsetWidth, width, height });
 }
 
-// ── Spawn coins ──
 function spawnCoin() {
   if (!gameRunning) return;
   const el = document.createElement("div");
@@ -862,11 +1073,10 @@ function spawnCoin() {
   coinItems.push({ el, x: gameArea.offsetWidth, bottom });
 }
 
-// ── Spawn power-ups ──
 const powerTypes = [
   { emoji: "🛡️", type: "shield", label: "SHIELD!" },
-  { emoji: "⚡", type: "slow",   label: "SLOW!" },
-  { emoji: "💥", type: "clear",  label: "CLEAR!" }
+  { emoji: "⚡",  type: "slow",   label: "SLOW!" },
+  { emoji: "💥",  type: "clear",  label: "CLEAR!" }
 ];
 
 function spawnPowerup() {
@@ -882,48 +1092,35 @@ function spawnPowerup() {
   powerups.push({ el, x: gameArea.offsetWidth, bottom, ...pw });
 }
 
-// ── Collision (AABB) ──
-function rectsOverlap(ax, ay, aw, ah, bx, by, bw, bh) {
-  return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+function rectsOverlap(ax,ay,aw,ah,bx,by,bw,bh) {
+  return ax < bx+bw && ax+aw > bx && ay < by+bh && ay+ah > by;
 }
 
 function getCharRect() {
   const charH = isDucking ? DUCK_H : CHAR_H;
-  // x = 70px fixed left, add some padding for tighter hitbox
   return { x: 78, y: gameArea.offsetHeight - charBottom - charH, w: CHAR_W - 20, h: charH - 10 };
 }
 
-// ── Main loop ──
 function gameLoop() {
   if (!gameRunning || paused) return;
-
   score++;
   if (score > highScore) highScore = score;
   updateHUD();
 
-  // Speed up seismic bg
-  const anim = `moveSeismic ${Math.max(0.4, 1.2 - gameSpeed * 0.05)}s linear infinite`;
-  seismicBg.style.animation = anim;
+  seismicBg.style.animation = `moveSeismic ${Math.max(0.4, 1.2 - gameSpeed * 0.05)}s linear infinite`;
 
   const ch = getCharRect();
   const aH = gameArea.offsetHeight;
 
-  // Move obstacles
   obstacles = obstacles.filter(obs => {
     obs.x -= gameSpeed;
     obs.el.style.left = obs.x + "px";
-    if (obs.x < -obs.width - 10) {
-      obs.el.remove(); return false;
-    }
-    // collision
+    if (obs.x < -obs.width - 10) { obs.el.remove(); return false; }
     const oy = aH - obs.height;
-    if (!shielded && rectsOverlap(ch.x, ch.y, ch.w, ch.h, obs.x, oy, obs.width, obs.height)) {
-      handleHit(obs.x, oy);
-    }
+    if (!shielded && rectsOverlap(ch.x, ch.y, ch.w, ch.h, obs.x, oy, obs.width, obs.height)) handleHit(obs.x, oy);
     return true;
   });
 
-  // Move coins
   coinItems = coinItems.filter(c => {
     c.x -= gameSpeed;
     c.el.style.left = c.x + "px";
@@ -932,13 +1129,13 @@ function gameLoop() {
     if (rectsOverlap(ch.x, ch.y, ch.w, ch.h, c.x, cy, 22, 22)) {
       c.el.remove();
       coins++;
+      updateHUD();
       showMessage(`+1 COIN 🪙`, "#d4a574");
       return false;
     }
     return true;
   });
 
-  // Move powerups
   powerups = powerups.filter(p => {
     p.x -= gameSpeed;
     p.el.style.left = p.x + "px";
@@ -953,7 +1150,6 @@ function gameLoop() {
   });
 }
 
-// ── Handle hit ──
 let hitCooldown = false;
 function handleHit(ex, ey) {
   if (hitCooldown) return;
@@ -963,51 +1159,54 @@ function handleHit(ex, ey) {
   updateLives();
   character.classList.add("hit");
   setTimeout(() => { character.classList.remove("hit"); hitCooldown = false; }, 600);
-
-  if (lives <= 0) {
-    endGame();
-  } else {
+  if (lives <= 0) { endGame(); }
+  else {
     showMessage(`💔 -1 Life! (${lives} left)`, "#f87171");
-    // brief invincibility
     shielded = true;
     setTimeout(() => { shielded = false; }, 1500);
   }
 }
 
-// ── Powerups ──
 function activatePowerup(p) {
   showMessage(p.label + " 🎉", "#00f5d4");
   if (p.type === "shield") {
     shielded = true;
     character.classList.add("shielded");
     clearTimeout(shieldTimer);
-    shieldTimer = setTimeout(() => {
-      shielded = false;
-      character.classList.remove("shielded");
-    }, 4000);
+    shieldTimer = setTimeout(() => { shielded = false; character.classList.remove("shielded"); }, 4000);
   } else if (p.type === "slow") {
-    const oldSpeed = gameSpeed;
+    const old = gameSpeed;
     gameSpeed = Math.max(2, gameSpeed * 0.5);
-    setTimeout(() => { gameSpeed = oldSpeed; }, 4000);
+    setTimeout(() => { gameSpeed = old; }, 4000);
   } else if (p.type === "clear") {
     obstacles.forEach(o => o.el.remove());
     obstacles = [];
   }
 }
 
-// ── End ──
-function endGame() {
+async function endGame() {
   gameRunning = false;
   [gameInterval, obstacleInterval, coinInterval, powerupInterval, difficultyInterval].forEach(clearInterval);
   highScore = Math.max(highScore, score);
+
+  // ── Save coins permanently ──
+  if (currentPlayer && coins > 0) {
+    const prev = allTimeCoins;
+    allTimeCoins += coins;
+    await savePlayerCoins(currentPlayer, allTimeCoins);
+    updateAllTimeDisplay();
+    showCoinSaveFlash(coins);
+  }
+
   finalScoreEl.textContent = score;
   finalHighEl.textContent  = highScore;
   finalCoinsEl.textContent = coins;
   finalLevelEl.textContent = level;
+  goAllTimeEl.textContent  = allTimeCoins.toLocaleString();
+  goPlayerNameEl.textContent = currentPlayer ? `${currentPlayer}'s wallet` : "";
   gameOverEl.classList.add("show");
 }
 
-// ── Pause ──
 function togglePause() {
   if (!gameRunning) return;
   paused = !paused;
@@ -1016,32 +1215,26 @@ function togglePause() {
 
 // ── Keyboard ──
 document.addEventListener("keydown", e => {
-  if (e.code === "Space" || e.code === "ArrowUp") {
-    e.preventDefault();
-    jump();
-  }
-  if (e.code === "ArrowDown") {
-    e.preventDefault();
-    startDuck();
-  }
-  if (e.code === "KeyP" || e.code === "Escape") {
-    togglePause();
-  }
+  if (e.code === "Space" || e.code === "ArrowUp") { e.preventDefault(); jump(); }
+  if (e.code === "ArrowDown") { e.preventDefault(); startDuck(); }
+  if (e.code === "KeyP" || e.code === "Escape") togglePause();
 });
-document.addEventListener("keyup", e => {
-  if (e.code === "ArrowDown") stopDuck();
-});
+document.addEventListener("keyup", e => { if (e.code === "ArrowDown") stopDuck(); });
 
 // ── Touch ──
 let touchStartY = 0;
-document.addEventListener("touchstart", e => {
-  touchStartY = e.touches[0].clientY;
-}, { passive: true });
+document.addEventListener("touchstart", e => { touchStartY = e.touches[0].clientY; }, { passive: true });
 document.addEventListener("touchend", e => {
   const dy = touchStartY - e.changedTouches[0].clientY;
   if (dy > 20) jump();
   if (dy < -20) startDuck();
 }, { passive: true });
+
+// ── Utility ──
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
 </script>
 </body>
 </html>
